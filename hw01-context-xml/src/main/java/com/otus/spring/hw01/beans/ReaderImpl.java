@@ -17,7 +17,7 @@ import java.util.Map;
 public class ReaderImpl implements Reader {
 
     @Override
-    public List<String[]> readFile(final String pathToFile) throws IOException, URISyntaxException {
+    public List<String[]> readFile(final String pathToFile) throws Exception {
         final URI uri = getClass().getClassLoader().getResource(pathToFile).toURI();
         final var lines = new ArrayList<String[]>();
         try (final FileSystem fileSystem = FileSystems.newFileSystem(uri, getEnvironment())) {

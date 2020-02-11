@@ -3,8 +3,6 @@ package com.otus.spring.hw01.beans;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,7 +16,7 @@ public class ReaderTests {
     }
 
     @Test
-    public void readFile() throws IOException, URISyntaxException {
+    public void readFile() throws Exception {
         final List<String[]> lines = reader.readFile("questions.csv");
 
         assertThat(lines).isNotNull();

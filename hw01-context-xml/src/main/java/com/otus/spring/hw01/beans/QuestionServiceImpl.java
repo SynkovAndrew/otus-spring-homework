@@ -3,8 +3,6 @@ package com.otus.spring.hw01.beans;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +25,7 @@ public class QuestionServiceImpl implements QuestionService {
     public void loadQuestions() {
         try {
             reader.readFile(pathToFile).forEach(line -> questionAnswerMap.put(line[0], line[1]));
-        } catch (IOException | URISyntaxException e) {
+        } catch (Exception e) {
             log.error("Failed to load questions!");
         }
     }
