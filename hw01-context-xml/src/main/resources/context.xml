@@ -4,12 +4,22 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-placeholder location="classpath:application.properties" />
+    <context:property-placeholder location="classpath:application.properties"/>
 
     <bean id="csvReader" class="com.otus.spring.hw01.beans.ReaderImpl"/>
+    <bean id="ui" class="com.otus.spring.hw01.beans.CLI"/>
     <bean id="questionService" class="com.otus.spring.hw01.beans.QuestionServiceImpl" init-method="loadQuestions">
         <constructor-arg ref="csvReader"/>
-        <constructor-arg value="${path.to.question.file}"/>
+        <property name="pathToFile" value="${path.to.question.file}"/>
+    </bean>
+    <bean id="application" class="com.otus.spring.hw01.beans.ApplicationImpl" init-method="run">
+        <constructor-arg ref="questionService"/>
+        <constructor-arg ref="ui"/>
+        <property name="wrongAnswerMessage" value="${wrong.answer.message}"/>
+        <property name="rightAnswerMessage" value="${right.answer.message}"/>
+        <property name="congratulationMessage" value="${congratulation.message}"/>
+        <property name="sorryMessage" value="${sorry.message}"/>
+        <property name="helloMessage" value="${hello.message}"/>
     </bean>
 
 </beans>

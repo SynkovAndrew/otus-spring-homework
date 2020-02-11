@@ -1,5 +1,6 @@
 package com.otus.spring.hw01.beans;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -9,12 +10,12 @@ import java.util.Map;
 
 @Slf4j
 public class QuestionServiceImpl implements QuestionService {
-    private final String pathToFile;
     private final Map<String, String> questionAnswerMap;
     private final Reader reader;
+    @Setter
+    private String pathToFile;
 
-    public QuestionServiceImpl(final Reader reader, final String pathToFile) {
-        this.pathToFile = pathToFile;
+    public QuestionServiceImpl(final Reader reader) {
         this.reader = reader;
         this.questionAnswerMap = new HashMap<>();
     }
