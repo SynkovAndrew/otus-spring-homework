@@ -1,56 +1,44 @@
 package com.otus.spring.hw01.beans;
 
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.joining;
-
+@RequiredArgsConstructor
 public class ApplicationImpl implements Application {
+    private final MessageSource messageSource;
     private final QuestionService questionService;
     private final UI ui;
-    @Setter
-    private String congratulationMessage;
-    @Setter
-    private String helloMessage;
-    @Setter
-    private String rightAnswerMessage;
     private int score;
-    @Setter
-    private String sorryMessage;
-    @Setter
-    private String wrongAnswerMessage;
-
-    public ApplicationImpl(final QuestionService questionService, final UI ui) {
-        this.questionService = questionService;
-        this.ui = ui;
-    }
 
     @Override
     public void run() {
-        ui.print(helloMessage);
-        final String name = String.join(" ", ui.read());
+        ui.print(messageSource.getMessage("hello.message", null, Locale.ENGLISH));
 
+        final String name = String.join(" ", ui.read());
         final var questionAnswerMap = questionService.getQuestionAnswerMap();
         final int questionCount = questionAnswerMap.size();
+
         questionAnswerMap.forEach((question, answer) -> {
             ui.print(question);
             final List<String> read = ui.read();
             if (read.size() == 1 && Objects.equals(read.get(0).toLowerCase(), answer.toLowerCase())) {
-                ui.print(rightAnswerMessage);
+                ui.print(messageSource.getMessage("right.answer.message", null, Locale.ENGLISH));
                 score++;
             } else {
-                ui.print(wrongAnswerMessage);
+                ui.print(messageSource.getMessage("wrong.answer.message", null, Locale.ENGLISH));
             }
         });
 
         if (score > 3) {
-            ui.print(String.format(congratulationMessage, name, score, questionCount));
+            ui.print(messageSource.getMessage("congratulation.message",
+                    new Object[]{name, score, questionCount}, Locale.ENGLISH));
         } else {
-            ui.print(String.format(sorryMessage, name, score, questionCount));
+            ui.print(messageSource.getMessage("sorry.message",
+                    new Object[]{name, score, questionCount}, Locale.ENGLISH));
 
         }
         ui.print("");

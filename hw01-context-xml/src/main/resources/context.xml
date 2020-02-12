@@ -6,6 +6,11 @@
 
     <context:property-placeholder location="classpath:application.properties"/>
 
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename">
+            <value>messages</value>
+        </property>
+    </bean>
     <bean id="csvReader" class="com.otus.spring.hw01.beans.ReaderImpl"/>
     <bean id="ui" class="com.otus.spring.hw01.beans.CLI"/>
     <bean id="questionService" class="com.otus.spring.hw01.beans.QuestionServiceImpl" init-method="loadQuestions">
@@ -15,11 +20,6 @@
     <bean id="application" class="com.otus.spring.hw01.beans.ApplicationImpl" init-method="run">
         <constructor-arg ref="questionService"/>
         <constructor-arg ref="ui"/>
-        <property name="wrongAnswerMessage" value="${wrong.answer.message}"/>
-        <property name="rightAnswerMessage" value="${right.answer.message}"/>
-        <property name="congratulationMessage" value="${congratulation.message}"/>
-        <property name="sorryMessage" value="${sorry.message}"/>
-        <property name="helloMessage" value="${hello.message}"/>
+        <constructor-arg ref="messageSource"/>
     </bean>
-
 </beans>
