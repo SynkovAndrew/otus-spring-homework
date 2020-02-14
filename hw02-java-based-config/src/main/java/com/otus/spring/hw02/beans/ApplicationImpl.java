@@ -1,21 +1,32 @@
 package com.otus.spring.hw02.beans;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
+@Slf4j
 @Service
-@RequiredArgsConstructor
 public class ApplicationImpl implements Application {
-    private final MessageSource messageSource;
+    private final EasyMessageSource messageSource;
     private final QuestionService questionService;
     private final UI ui;
+    private final int successScoreThreshold;
     private int score;
+
+    public ApplicationImpl(final @Autowired EasyMessageSource messageSource,
+                           final @Autowired QuestionService questionService,
+                           final @Autowired UI ui,
+                           final @Value("${success.score.threshold:3}") int successScoreThreshold) {
+        this.messageSource = messageSource;
+        this.questionService = questionService;
+        this.ui = ui;
+        this.successScoreThreshold = successScoreThreshold;
+    }
 
     @PostConstruct
     public void init() {
@@ -24,31 +35,38 @@ public class ApplicationImpl implements Application {
 
     @Override
     public void run() {
-        ui.print(messageSource.getMessage("hello.message", null, Locale.ENGLISH));
+        try {
+            questionService.loadQuestions();
 
-        final String name = String.join(" ", ui.read());
-        final var questionAnswerMap = questionService.getQuestionAnswerMap();
-        final int questionCount = questionAnswerMap.size();
+            ui.print(messageSource.get("hello.message"));
 
-        questionAnswerMap.forEach((question, answer) -> {
-            ui.print(question);
-            final List<String> read = ui.read();
-            if (read.size() == 1 && Objects.equals(read.get(0).toLowerCase(), answer.toLowerCase())) {
-                ui.print(messageSource.getMessage("right.answer.message", null, Locale.ENGLISH));
-                score++;
+            final String name = String.join(" ", ui.read());
+            final var questionAnswerMap = questionService.getQuestionAnswerMap();
+            final int questionCount = questionAnswerMap.size();
+
+            questionAnswerMap.forEach((question, answer) -> {
+                ui.print(question);
+                final List<String> read = ui.read();
+                if (read.size() == 1 && Objects.equals(read.get(0).toLowerCase(), answer.toLowerCase())) {
+                    ui.print(messageSource.get("right.answer.message"));
+                    score++;
+                } else {
+                    ui.print(messageSource.get("wrong.answer.message"));
+                }
+            });
+
+            if (score > successScoreThreshold) {
+                ui.print(messageSource.get("congratulation.message",
+                        new Object[]{name, score, questionCount}));
             } else {
-                ui.print(messageSource.getMessage("wrong.answer.message", null, Locale.ENGLISH));
+                ui.print(messageSource.get("sorry.message",
+                        new Object[]{name, score, questionCount}));
+
             }
-        });
-
-        if (score > 3) {
-            ui.print(messageSource.getMessage("congratulation.message",
-                    new Object[]{name, score, questionCount}, Locale.ENGLISH));
-        } else {
-            ui.print(messageSource.getMessage("sorry.message",
-                    new Object[]{name, score, questionCount}, Locale.ENGLISH));
-
+            ui.print("");
+        } catch (Exception e) {
+            ui.print(messageSource.get("cant.load.questions.error"));
+            log.error("Failed to load questions:", e);
         }
-        ui.print("");
     }
 }

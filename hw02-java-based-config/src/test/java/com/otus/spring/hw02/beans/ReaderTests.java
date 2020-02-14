@@ -17,7 +17,7 @@ public class ReaderTests {
 
     @Test
     public void readFile() throws Exception {
-        final List<String[]> lines = reader.readFile("questions.csv");
+        final List<String[]> lines = reader.readFile("questions_en.csv");
 
         assertThat(lines).isNotNull();
         assertThat(lines).hasSize(4);

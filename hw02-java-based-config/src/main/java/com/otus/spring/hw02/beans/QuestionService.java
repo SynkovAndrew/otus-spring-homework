@@ -5,5 +5,5 @@ import java.util.Map;
 public interface QuestionService {
     Map<String, String> getQuestionAnswerMap();
 
-    void loadQuestions();
+    void loadQuestions() throws Exception;
 }

@@ -1,10 +1,14 @@
 package com.otus.spring.hw02;
 
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
+@ComponentScan
 public class JavaBasedConfigApplication {
 
     public static void main(String[] args) {
-        new ClassPathXmlApplicationContext("context.xml");
+        new AnnotationConfigApplicationContext(JavaBasedConfigApplication.class);
     }
 }

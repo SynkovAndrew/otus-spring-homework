@@ -4,9 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
 @Service
@@ -16,9 +17,10 @@ public class QuestionServiceImpl implements QuestionService {
     private final Reader reader;
 
     public QuestionServiceImpl(final Reader reader,
-                               final @Value("${path.to.question.file}") String pathToFile) {
+                               final @Value("${path.to.question.file}") String pathToFile,
+                               final @Value("${settings.language}") String language) {
         this.reader = reader;
-        this.pathToFile = pathToFile;
+        this.pathToFile = String.format(pathToFile, language);
         this.questionAnswerMap = new HashMap<>();
     }
 
@@ -26,16 +28,9 @@ public class QuestionServiceImpl implements QuestionService {
         return questionAnswerMap;
     }
 
-    @PostConstruct
-    public void init() {
-        loadQuestions();
-    }
-
-    public void loadQuestions() {
-        try {
-            reader.readFile(pathToFile).forEach(line -> questionAnswerMap.put(line[0], line[1]));
-        } catch (Exception e) {
-            log.error("Failed to load questions!");
-        }
+    public void loadQuestions() throws Exception {
+        reader.readFile(pathToFile).forEach(line -> questionAnswerMap.put(
+                new String(line[0].getBytes(), UTF_8), new String(line[1].getBytes(), UTF_8)));
+        log.info("{} questions have been loaded", questionAnswerMap.size());
     }
 }

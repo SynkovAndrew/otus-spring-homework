@@ -2,8 +2,13 @@ package com.otus.spring.hw02.beans;
 
 import com.opencsv.CSVReader;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -14,13 +19,14 @@ public class ReaderImpl implements Reader {
 
     @Override
     public List<String[]> readFile(final String pathToFile) throws Exception {
-        final URI uri = getClass().getClassLoader().getResource(pathToFile).toURI();
         final var lines = new ArrayList<String[]>();
-        try (final java.io.Reader reader = Files.newBufferedReader(Paths.get(uri))) {
-            try (final var csvReader = new CSVReader(reader)) {
-                String[] line;
-                while ((line = csvReader.readNext()) != null) {
-                    lines.add(line);
+        try ( final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(pathToFile)) {
+            try (final java.io.Reader reader = new InputStreamReader(inputStream)) {
+                try (final var csvReader = new CSVReader(reader)) {
+                    String[] line;
+                    while ((line = csvReader.readNext()) != null) {
+                        lines.add(line);
+                    }
                 }
             }
         }
