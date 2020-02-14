@@ -10,9 +10,13 @@
     <packaging>pom</packaging>
     <modules>
         <module>hw01-context-xml</module>
+        <module>hw02-java-based-config</module>
     </modules>
 
     <properties>
+        <org.springframework.version>5.2.3.RELEASE</org.springframework.version>
+        <javax.annotation.version>1.3.2</javax.annotation.version>
+        <com.opencsv.version>5.1</com.opencsv.version>
         <org.projectlombok.lombok.version>1.18.12</org.projectlombok.lombok.version>
         <ch.qos.logback.version>1.2.3</ch.qos.logback.version>
         <junit.jupiter.version>5.6.0</junit.jupiter.version>
@@ -52,7 +56,34 @@
                 <artifactId>assertj-core</artifactId>
                 <version>${org.assertj.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${org.springframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>javax.annotation-api</artifactId>
+                <version>${javax.annotation.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.opencsv</groupId>
+                <artifactId>opencsv</artifactId>
+                <version>${com.opencsv.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>${maven-shade-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
 </project>
