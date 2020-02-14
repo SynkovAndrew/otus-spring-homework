@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="classpath:application.properties"/>
+
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename">
+            <value>messages</value>
+        </property>
+    </bean>
+    <bean id="csvReader" class="com.otus.spring.hw01.beans.ReaderImpl"/>
+    <bean id="ui" class="com.otus.spring.hw01.beans.CLI"/>
+    <bean id="questionService" class="com.otus.spring.hw01.beans.QuestionServiceImpl" init-method="loadQuestions">
+        <constructor-arg ref="csvReader"/>
+        <property name="pathToFile" value="${path.to.question.file}"/>
+    </bean>
+    <bean id="application" class="com.otus.spring.hw01.beans.ApplicationImpl" init-method="run">
+        <constructor-arg ref="questionService"/>
+        <constructor-arg ref="ui"/>
+        <constructor-arg ref="messageSource"/>
+    </bean>
+</beans>
