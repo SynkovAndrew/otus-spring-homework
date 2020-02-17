@@ -20,7 +20,7 @@ public class ReaderImpl implements Reader {
     @Override
     public List<String[]> readFile(final String pathToFile) throws Exception {
         final var lines = new ArrayList<String[]>();
-        try ( final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(pathToFile)) {
+        try (final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(pathToFile)) {
             try (final java.io.Reader reader = new InputStreamReader(inputStream)) {
                 try (final var csvReader = new CSVReader(reader)) {
                     String[] line;
