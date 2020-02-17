@@ -1,5 +1,6 @@
 package com.otus.spring.hw02.configuration;
 
+import com.google.gson.Gson;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,5 +26,10 @@ public class ApplicationConfiguration {
         configurer.setLocations(resources);
         configurer.setIgnoreUnresolvablePlaceholders(true);
         return configurer;
+    }
+
+    @Bean
+    public static Gson gson() {
+        return new Gson();
     }
 }

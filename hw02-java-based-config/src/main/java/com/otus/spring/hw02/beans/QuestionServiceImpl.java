@@ -1,5 +1,6 @@
 package com.otus.spring.hw02.beans;
 
+import com.otus.spring.hw02.aspect.Loggable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,10 +25,12 @@ public class QuestionServiceImpl implements QuestionService {
         this.questionAnswerMap = new HashMap<>();
     }
 
+    @Loggable
     public Map<String, String> getQuestionAnswerMap() {
         return questionAnswerMap;
     }
 
+    @Loggable
     public void loadQuestions() throws Exception {
         reader.readFile(pathToFile).forEach(line -> questionAnswerMap.put(
                 new String(line[0].getBytes(), UTF_8), new String(line[1].getBytes(), UTF_8)));
