@@ -1,0 +1,4 @@
+settings:
+  path_to_question_file: questions_%s.csv
+  language: ru
+  success_score_threshold: 3
