@@ -1,0 +1,8 @@
+settings:
+  path_to_question_file: questions_%s.csv
+  language: ru
+  success_score_threshold: 3
+
+auth:
+  username: admin
+  password: 21232f297a57a5a743894a0e4a801fc3
