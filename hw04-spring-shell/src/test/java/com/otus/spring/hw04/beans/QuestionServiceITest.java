@@ -5,6 +5,8 @@ import com.otus.spring.hw04.configuration.SettingsHolder;
 import com.otus.spring.hw04.configuration.TestConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +18,7 @@ import java.util.Map;
 import static com.otus.spring.hw04.configuration.Constant.SPRING_PROFILE_TEST;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {TestConfiguration.class})
 @ActiveProfiles(SPRING_PROFILE_TEST)

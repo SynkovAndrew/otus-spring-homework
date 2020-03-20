@@ -3,6 +3,8 @@ package com.otus.spring.hw04.beans;
 import com.otus.spring.hw04.configuration.SettingsHolder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -13,6 +15,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@Execution(ExecutionMode.CONCURRENT)
 public class QuestionServiceTest {
     private static Reader reader;
     private static SettingsHolder settingsHolder;
