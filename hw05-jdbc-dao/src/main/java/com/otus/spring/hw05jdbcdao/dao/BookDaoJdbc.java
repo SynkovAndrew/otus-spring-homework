@@ -22,8 +22,8 @@ public class BookDaoJdbc implements BookDao {
     private final NamedParameterJdbcOperations jdbcOperations;
 
     @Override
-    public void create(final Book book) {
-        jdbcOperations.update(
+    public int create(final Book book) {
+        return jdbcOperations.update(
                 "insert into book (author_id, genre_id, name, year) " +
                         "values (:author_id, :genre_id, :name, :year)",
                 of(
@@ -36,8 +36,8 @@ public class BookDaoJdbc implements BookDao {
     }
 
     @Override
-    public void deleteById(final int id) {
-        jdbcOperations.update("delete from book where id = :id", of("id", id));
+    public int deleteById(final int id) {
+        return jdbcOperations.update("delete from book where id = :id", of("id", id));
     }
 
     @Override
@@ -81,8 +81,8 @@ public class BookDaoJdbc implements BookDao {
     }
 
     @Override
-    public void update(final int id, final Book book) {
-        jdbcOperations.update("update book set name = :name, year = :year, " +
+    public int update(final int id, final Book book) {
+        return jdbcOperations.update("update book set name = :name, year = :year, " +
                         "author_id = :author_id, genre_id = :genre_id where id = :id",
                 of(
                         "id", id,

@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface GenreDao {
-    void create(Genre genre);
+    int create(Genre genre);
 
-    void deleteById(int id);
+    int deleteById(int id);
 
     List<Genre> findAll();
 
     Optional<Genre> findById(int id);
 
-    void update(int id, Genre genre);
+    int update(int id, Genre genre);
 }

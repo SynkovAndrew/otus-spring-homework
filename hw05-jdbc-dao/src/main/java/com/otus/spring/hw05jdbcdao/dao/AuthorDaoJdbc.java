@@ -17,13 +17,13 @@ public class AuthorDaoJdbc implements AuthorDao {
     private final NamedParameterJdbcOperations jdbcOperations;
 
     @Override
-    public void create(final Author author) {
-        jdbcOperations.update("insert into author (name) values (:name)", of("name", author.getName()));
+    public int create(final Author author) {
+        return jdbcOperations.update("insert into author (name) values (:name)", of("name", author.getName()));
     }
 
     @Override
-    public void deleteById(final int id) {
-        jdbcOperations.update("delete from author where id = :id", of("id", id));
+    public int deleteById(final int id) {
+        return jdbcOperations.update("delete from author where id = :id", of("id", id));
     }
 
     @Override
@@ -52,8 +52,8 @@ public class AuthorDaoJdbc implements AuthorDao {
     }
 
     @Override
-    public void update(final int id, final Author author) {
-        jdbcOperations.update("update author set name = :name where id = :id",
+    public int update(final int id, final Author author) {
+        return jdbcOperations.update("update author set name = :name where id = :id",
                 of("id", id, "name", author.getName()));
     }
 }

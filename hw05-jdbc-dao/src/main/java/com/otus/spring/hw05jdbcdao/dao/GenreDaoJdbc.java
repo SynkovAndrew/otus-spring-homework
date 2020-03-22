@@ -17,13 +17,13 @@ public class GenreDaoJdbc implements GenreDao {
     private final NamedParameterJdbcOperations jdbcOperations;
 
     @Override
-    public void create(final Genre genre) {
-        jdbcOperations.update("insert into genre (name) values (:name)", of("name", genre.getName()));
+    public int create(final Genre genre) {
+        return jdbcOperations.update("insert into genre (name) values (:name)", of("name", genre.getName()));
     }
 
     @Override
-    public void deleteById(final int id) {
-        jdbcOperations.update("delete from genre where id = :id", of("id", id));
+    public int deleteById(final int id) {
+        return jdbcOperations.update("delete from genre where id = :id", of("id", id));
     }
 
     @Override
@@ -53,8 +53,8 @@ public class GenreDaoJdbc implements GenreDao {
     }
 
     @Override
-    public void update(final int id, final Genre genre) {
-        jdbcOperations.update("update genre set name = :name where id = :id",
+    public int update(final int id, final Genre genre) {
+        return jdbcOperations.update("update genre set name = :name where id = :id",
                 of("id", id, "name", genre.getName()));
     }
 }

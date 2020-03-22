@@ -32,15 +32,33 @@ public class AuthorDaoTest {
     }
 
     @Test
+    @DisplayName("Delete absent author")
+    public void deleteAbsentTest() {
+        final int result = authorDao.deleteById(12);
+        assertThat(result).isEqualTo(0);
+
+        final List<Author> all = authorDao.findAll();
+        assertThat(all).size().isEqualTo(5);
+    }
+
+    @Test
     @DisplayName("Delete author")
     public void deleteTest() {
-        authorDao.deleteById(5);
+        final int result = authorDao.deleteById(5);
+        assertThat(result).isEqualTo(1);
 
         final List<Author> all = authorDao.findAll();
         assertThat(all).size().isEqualTo(4);
         assertThat(all).extracting("id").containsOnly(1, 2, 3, 4);
         assertThat(all).extracting("name")
                 .containsOnly("Erich Maria Remarque", "Ernest Hemingway", "George Orwell", "Sigmund Freud");
+    }
+
+    @Test
+    @DisplayName("Find absent author by id")
+    public void findAbsentByIdTest() {
+        final Optional<Author> optional = authorDao.findById(11);
+        assertThat(optional.isEmpty()).isTrue();
     }
 
     @Test
@@ -64,8 +82,10 @@ public class AuthorDaoTest {
     }
 
     @Test
-    @DisplayName("Find absent author by id")
-    public void findAbsentByIdTest() {
+    @DisplayName("Update absent author")
+    public void updateAbsentTest() {
+        final int result = authorDao.update(11, Author.builder().name("Nikolai Michailowitsch Karamsin").build());
+        assertThat(result).isEqualTo(0);
         final Optional<Author> optional = authorDao.findById(11);
         assertThat(optional.isEmpty()).isTrue();
     }
@@ -73,18 +93,11 @@ public class AuthorDaoTest {
     @Test
     @DisplayName("Update author")
     public void updateTest() {
-        authorDao.update(1, Author.builder().name("Nikolai Michailowitsch Karamsin").build());
+        final int result = authorDao.update(1, Author.builder().name("Nikolai Michailowitsch Karamsin").build());
+        assertThat(result).isEqualTo(1);
         final Author author = authorDao.findById(1).get();
         assertThat(author).isNotNull();
         assertThat(author).extracting("id").isEqualTo(1);
         assertThat(author).extracting("name").isEqualTo("Nikolai Michailowitsch Karamsin");
-    }
-
-    @Test
-    @DisplayName("Update absent author")
-    public void updateAbsentTest() {
-        authorDao.update(11, Author.builder().name("Nikolai Michailowitsch Karamsin").build());
-        final Optional<Author> optional = authorDao.findById(11);
-        assertThat(optional.isEmpty()).isTrue();
     }
 }

@@ -23,7 +23,8 @@ public class GenreDaoTest {
     public void createTest() {
         final Genre genre = Genre.builder().name("Thriller").build();
 
-        genreDao.create(genre);
+        final int result = genreDao.create(genre);
+        assertThat(result).isEqualTo(1);
 
         final List<Genre> all = genreDao.findAll();
         assertThat(all).size().isEqualTo(7);
@@ -32,9 +33,20 @@ public class GenreDaoTest {
     }
 
     @Test
+    @DisplayName("Delete absent genre")
+    public void deleteAbsentTest() {
+        final int result = genreDao.deleteById(156);
+        assertThat(result).isEqualTo(0);
+
+        final List<Genre> all = genreDao.findAll();
+        assertThat(all).size().isEqualTo(6);
+    }
+
+    @Test
     @DisplayName("Delete genre")
     public void deleteTest() {
-        genreDao.deleteById(1);
+        final int result = genreDao.deleteById(1);
+        assertThat(result).isEqualTo(1);
 
         final List<Genre> all = genreDao.findAll();
         assertThat(all).size().isEqualTo(5);
@@ -72,7 +84,9 @@ public class GenreDaoTest {
     @Test
     @DisplayName("Update absent genre")
     public void updateAbsentTest() {
-        genreDao.update(11, Genre.builder().name("Non Fiction").build());
+        final int result = genreDao.update(11, Genre.builder().name("Non Fiction").build());
+        assertThat(result).isEqualTo(0);
+
         final Optional<Genre> optional = genreDao.findById(12);
         assertThat(optional.isEmpty()).isTrue();
     }
@@ -80,7 +94,9 @@ public class GenreDaoTest {
     @Test
     @DisplayName("Update genre")
     public void updateTest() {
-        genreDao.update(2, Genre.builder().name("Non Fiction").build());
+        final int result = genreDao.update(2, Genre.builder().name("Non Fiction").build());
+        assertThat(result).isEqualTo(1);
+
         final Genre genre = genreDao.findById(2).get();
         assertThat(genre).isNotNull();
         assertThat(genre).extracting("id").isEqualTo(2);

@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AuthorDao {
-    void create(Author author);
+    int create(Author author);
 
-    void deleteById(int id);
+    int deleteById(int id);
 
     List<Author> findAll();
 
     Optional<Author> findById(int id);
 
-    void update(int id, Author author);
+    int update(int id, Author author);
 }

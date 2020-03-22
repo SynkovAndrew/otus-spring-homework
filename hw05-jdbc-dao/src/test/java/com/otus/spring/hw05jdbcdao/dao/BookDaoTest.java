@@ -40,9 +40,20 @@ public class BookDaoTest {
     }
 
     @Test
+    @DisplayName("Delete absent book")
+    public void deleteAbsentTest() {
+        final int result = bookDao.deleteById(123);
+        assertThat(result).isEqualTo(0);
+
+        final List<Book> all = bookDao.findAll();
+        assertThat(all).size().isEqualTo(6);
+    }
+
+    @Test
     @DisplayName("Delete book")
     public void deleteTest() {
-        bookDao.deleteById(4);
+        final int result = bookDao.deleteById(4);
+        assertThat(result).isEqualTo(1);
 
         final List<Book> all = bookDao.findAll();
         assertThat(all).size().isEqualTo(5);
@@ -90,7 +101,7 @@ public class BookDaoTest {
     @Test
     @DisplayName("Update absent book")
     public void updateAbsentTest() {
-        bookDao.update(12, Book.builder()
+        final int result = bookDao.update(12, Book.builder()
                 .name("The Black Swan")
                 .year(1967)
                 .author(Author.builder()
@@ -100,6 +111,7 @@ public class BookDaoTest {
                         .id(2)
                         .build())
                 .build());
+        assertThat(result).isEqualTo(0);
 
         final Optional<Book> optional = bookDao.findById(12);
         assertThat(optional.isEmpty()).isTrue();
@@ -108,7 +120,7 @@ public class BookDaoTest {
     @Test
     @DisplayName("Update book")
     public void updateTest() {
-        bookDao.update(4, Book.builder()
+        final int result = bookDao.update(4, Book.builder()
                 .name("The Black Swan")
                 .year(1967)
                 .author(Author.builder()
@@ -118,6 +130,7 @@ public class BookDaoTest {
                         .id(2)
                         .build())
                 .build());
+        assertThat(result).isEqualTo(1);
 
         final Book book = bookDao.findById(4).get();
         assertThat(book).isNotNull();
