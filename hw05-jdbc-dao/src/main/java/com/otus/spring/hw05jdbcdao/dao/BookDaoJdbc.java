@@ -4,6 +4,7 @@ import com.otus.spring.hw05jdbcdao.domain.Author;
 import com.otus.spring.hw05jdbcdao.domain.Book;
 import com.otus.spring.hw05jdbcdao.domain.Genre;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
@@ -58,27 +59,33 @@ public class BookDaoJdbc implements BookDao {
 
     @Override
     public Optional<Book> findById(final int id) {
-        return jdbcOperations.queryForObject("select * from book where id = :id", of("id", id),
-                (resultSet, rowNumber) -> Optional.of(
-                        Book.builder()
-                                .id(resultSet.getInt("id"))
-                                .author(ofNullable(resultSet.getInt("author_id"))
-                                        .flatMap(authorDao::findById)
-                                        .orElse(null))
-                                .genre(ofNullable(resultSet.getInt("genre_id"))
-                                        .flatMap(genreDao::findById)
-                                        .orElse(null))
-                                .name(resultSet.getString("name"))
-                                .year(resultSet.getInt("year"))
-                                .build()
-                ));
+        try {
+            return jdbcOperations.queryForObject("select * from book where id = :id", of("id", id),
+                    (resultSet, rowNumber) -> Optional.of(
+                            Book.builder()
+                                    .id(resultSet.getInt("id"))
+                                    .author(ofNullable(resultSet.getInt("author_id"))
+                                            .flatMap(authorDao::findById)
+                                            .orElse(null))
+                                    .genre(ofNullable(resultSet.getInt("genre_id"))
+                                            .flatMap(genreDao::findById)
+                                            .orElse(null))
+                                    .name(resultSet.getString("name"))
+                                    .year(resultSet.getInt("year"))
+                                    .build()
+                    ));
+        } catch (
+                EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
     public void update(final int id, final Book book) {
-        jdbcOperations.update("update book set name = :name, year = :yeer, " +
+        jdbcOperations.update("update book set name = :name, year = :year, " +
                         "author_id = :author_id, genre_id = :genre_id where id = :id",
                 of(
+                        "id", id,
                         "author_id", ofNullable(book.getAuthor()).map(Author::getId).orElse(null),
                         "genre_id", ofNullable(book.getGenre()).map(Genre::getId).orElse(null),
                         "name", book.getName(),

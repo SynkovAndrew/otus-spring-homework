@@ -2,6 +2,7 @@ package com.otus.spring.hw05jdbcdao.dao;
 
 import com.otus.spring.hw05jdbcdao.domain.Genre;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
@@ -37,18 +38,23 @@ public class GenreDaoJdbc implements GenreDao {
 
     @Override
     public Optional<Genre> findById(final int id) {
-        return jdbcOperations.queryForObject("select * from genre where id = :id", of("id", id),
-                (resultSet, rowNumber) -> Optional.of(
-                        Genre.builder()
-                                .id(resultSet.getInt("id"))
-                                .name(resultSet.getString("name"))
-                                .build()
-                ));
+        try {
+            return jdbcOperations.queryForObject("select * from genre where id = :id", of("id", id),
+                    (resultSet, rowNumber) -> Optional.of(
+                            Genre.builder()
+                                    .id(resultSet.getInt("id"))
+                                    .name(resultSet.getString("name"))
+                                    .build()
+                    ));
+        } catch (
+                EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
     public void update(final int id, final Genre genre) {
         jdbcOperations.update("update genre set name = :name where id = :id",
-                of("id", genre.getId(), "name", genre.getName()));
+                of("id", id, "name", genre.getName()));
     }
 }

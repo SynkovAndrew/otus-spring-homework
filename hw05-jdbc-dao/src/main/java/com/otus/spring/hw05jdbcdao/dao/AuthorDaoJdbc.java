@@ -2,6 +2,7 @@ package com.otus.spring.hw05jdbcdao.dao;
 
 import com.otus.spring.hw05jdbcdao.domain.Author;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
@@ -37,13 +38,17 @@ public class AuthorDaoJdbc implements AuthorDao {
 
     @Override
     public Optional<Author> findById(final int id) {
-        return jdbcOperations.queryForObject("select * from author where id = :id", of("id", id),
-                (resultSet, rowNumber) -> Optional.of(
-                        Author.builder()
-                                .id(resultSet.getInt("id"))
-                                .name(resultSet.getString("name"))
-                                .build()
-                ));
+        try {
+            return jdbcOperations.queryForObject("select * from author where id = :id", of("id", id),
+                    (resultSet, rowNumber) -> Optional.of(
+                            Author.builder()
+                                    .id(resultSet.getInt("id"))
+                                    .name(resultSet.getString("name"))
+                                    .build()
+                    ));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
