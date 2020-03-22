@@ -1,6 +1,6 @@
 package com.otus.spring.hw05jdbcdao.dao;
 
-import com.otus.spring.hw05jdbcdao.domain.Author;
+import com.otus.spring.hw05jdbcdao.domain.Genre;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
@@ -12,23 +12,23 @@ import static com.google.common.collect.ImmutableMap.of;
 
 @Repository
 @RequiredArgsConstructor
-public class AuthorDaoJdbc implements AuthorDao {
+public class GenreDaoJdbc implements GenreDao {
     private final NamedParameterJdbcOperations jdbcOperations;
 
     @Override
-    public void create(final Author author) {
-        jdbcOperations.update("insert into author (name) values (:name)", of("name", author.getName()));
+    public void create(final Genre genre) {
+        jdbcOperations.update("insert into genre (name) values (:name)", of("name", genre.getName()));
     }
 
     @Override
     public void deleteById(final int id) {
-        jdbcOperations.update("delete from author where id = :id", of("id", id));
+        jdbcOperations.update("delete from genre where id = :id", of("id", id));
     }
 
     @Override
-    public List<Author> findAll() {
-        return jdbcOperations.query("select * from author", of(),
-                (resultSet, rowNumber) -> Author.builder()
+    public List<Genre> findAll() {
+        return jdbcOperations.query("select * from genre", of(),
+                (resultSet, rowNumber) -> Genre.builder()
                         .id(resultSet.getInt("id"))
                         .name(resultSet.getString("name"))
                         .build()
@@ -36,10 +36,10 @@ public class AuthorDaoJdbc implements AuthorDao {
     }
 
     @Override
-    public Optional<Author> findById(final int id) {
-        return jdbcOperations.queryForObject("select * from author where id = :id", of("id", id),
+    public Optional<Genre> findById(final int id) {
+        return jdbcOperations.queryForObject("select * from genre where id = :id", of("id", id),
                 (resultSet, rowNumber) -> Optional.of(
-                        Author.builder()
+                        Genre.builder()
                                 .id(resultSet.getInt("id"))
                                 .name(resultSet.getString("name"))
                                 .build()
@@ -47,8 +47,8 @@ public class AuthorDaoJdbc implements AuthorDao {
     }
 
     @Override
-    public void update(final int id, final Author author) {
-        jdbcOperations.update("update author set name = :name where id = :id",
-                of("id", id, "name", author.getName()));
+    public void update(final int id, final Genre genre) {
+        jdbcOperations.update("update genre set name = :name where id = :id",
+                of("id", genre.getId(), "name", genre.getName()));
     }
 }

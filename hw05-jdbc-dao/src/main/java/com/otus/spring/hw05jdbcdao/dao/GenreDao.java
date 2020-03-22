@@ -2,12 +2,15 @@ package com.otus.spring.hw05jdbcdao.dao;
 
 import com.otus.spring.hw05jdbcdao.domain.Genre;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface GenreDao {
     void create(Genre genre);
 
     void deleteById(int id);
+
+    List<Genre> findAll();
 
     Optional<Genre> findById(int id);
 

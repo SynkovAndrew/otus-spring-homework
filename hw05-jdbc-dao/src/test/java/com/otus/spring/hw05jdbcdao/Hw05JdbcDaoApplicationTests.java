@@ -8,6 +8,6 @@ class Hw05JdbcDaoApplicationTests {
 
     @Test
     void contextLoads() {
-    }
 
+    }
 }
