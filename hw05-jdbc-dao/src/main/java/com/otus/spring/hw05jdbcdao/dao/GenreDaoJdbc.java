@@ -1,5 +1,6 @@
 package com.otus.spring.hw05jdbcdao.dao;
 
+import com.otus.spring.hw05jdbcdao.domain.Book;
 import com.otus.spring.hw05jdbcdao.domain.Genre;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -7,9 +8,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.google.common.collect.ImmutableMap.of;
+import static java.util.stream.Collectors.groupingBy;
 
 @Repository
 @RequiredArgsConstructor
@@ -28,9 +31,20 @@ public class GenreDaoJdbc implements GenreDao {
 
     @Override
     public List<Genre> findAll() {
+        final Map<Integer, List<Book>> booksGroupedByGenre = jdbcOperations.query("select * from book", of(),
+                (resultSet, rowNumber) -> Book.builder()
+                        .id(resultSet.getInt("id"))
+                        .name(resultSet.getString("name"))
+                        .genre(Genre.builder().id(resultSet.getInt("genre_id")).build())
+                        .year(resultSet.getInt("year"))
+                        .build())
+                .stream()
+                .collect(groupingBy(book -> book.getGenre().getId()));
+
         return jdbcOperations.query("select * from genre", of(),
                 (resultSet, rowNumber) -> Genre.builder()
                         .id(resultSet.getInt("id"))
+                        .books(booksGroupedByGenre.get(resultSet.getInt("id")))
                         .name(resultSet.getString("name"))
                         .build()
         );
@@ -43,11 +57,20 @@ public class GenreDaoJdbc implements GenreDao {
                     (resultSet, rowNumber) -> Optional.of(
                             Genre.builder()
                                     .id(resultSet.getInt("id"))
+                                    .books(
+                                            jdbcOperations.query("select * from book where genre_id = :genre_id",
+                                                    of("genre_id", id),
+                                                    (innerResultSet, innerRowNumber) -> Book.builder()
+                                                            .id(innerResultSet.getInt("id"))
+                                                            .name(innerResultSet.getString("name"))
+                                                            .year(innerResultSet.getInt("year"))
+                                                            .build()
+                                            )
+                                    )
                                     .name(resultSet.getString("name"))
                                     .build()
                     ));
-        } catch (
-                EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
     }

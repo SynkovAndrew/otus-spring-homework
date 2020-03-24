@@ -7,7 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @JdbcTest
-@ComponentScan("com.otus.spring.hw05jdbcdao.dao")
+@Import(BookDaoJdbc.class)
 public class BookDaoTest {
     @Autowired
     private BookDao bookDao;
@@ -83,6 +82,15 @@ public class BookDaoTest {
                         "The Sun Also Rises", "Animal Farm", "The Psychopathology of Everyday Life");
         assertThat(all).extracting("year")
                 .containsOnly(1964, 1957, 1951, 1927, 1945, 1904);
+        assertThat(all).extracting("author.id")
+                .containsOnly(1, 1, 2, 2, 3, 4);
+        assertThat(all).extracting("author.name")
+                .containsOnly("Erich Maria Remarque", "Erich Maria Remarque", "Ernest Hemingway",
+                        "Ernest Hemingway", "George Orwell", "Sigmund Freud");
+        assertThat(all).extracting("genre.id")
+                .containsOnly(6, 6, 6, 6, 5, 4);
+        assertThat(all).extracting("genre.name")
+                .containsOnly("Fiction", "Fiction", "Fiction", "Fiction", "Science Fiction", "Psychology");
     }
 
     @Test

@@ -79,6 +79,10 @@ public class AuthorDaoTest {
         assertThat(author).isNotNull();
         assertThat(author).extracting("id").isEqualTo(3);
         assertThat(author).extracting("name").isEqualTo("George Orwell");
+        assertThat(author.getBooks()).extracting("name")
+                .containsOnly("Animal Farm");
+        assertThat(author.getBooks()).extracting("year")
+                .containsOnly(1945);
     }
 
     @Test

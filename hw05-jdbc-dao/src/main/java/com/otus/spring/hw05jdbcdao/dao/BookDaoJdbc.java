@@ -9,16 +9,17 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toMap;
 
 @Repository
 @RequiredArgsConstructor
 public class BookDaoJdbc implements BookDao {
-    private final AuthorDao authorDao;
-    private final GenreDao genreDao;
     private final NamedParameterJdbcOperations jdbcOperations;
 
     @Override
@@ -42,15 +43,27 @@ public class BookDaoJdbc implements BookDao {
 
     @Override
     public List<Book> findAll() {
+        final Map<Integer, Author> authors = jdbcOperations.query("select * from author", of(),
+                (resultSet, rowNumber) -> Author.builder()
+                        .id(resultSet.getInt("id"))
+                        .name(resultSet.getString("name"))
+                        .build())
+                .stream()
+                .collect(toMap(Author::getId, Function.identity()));
+
+        final Map<Integer, Genre> genres = jdbcOperations.query("select * from genre", of(),
+                (resultSet, rowNumber) -> Genre.builder()
+                        .id(resultSet.getInt("id"))
+                        .name(resultSet.getString("name"))
+                        .build())
+                .stream()
+                .collect(toMap(Genre::getId, Function.identity()));
+
         return jdbcOperations.query("select * from book", of(),
                 (resultSet, rowNumber) -> Book.builder()
                         .id(resultSet.getInt("id"))
-                        .author(ofNullable(resultSet.getInt("author_id"))
-                                .flatMap(authorDao::findById)
-                                .orElse(null))
-                        .genre(ofNullable(resultSet.getInt("genre_id"))
-                                .flatMap(genreDao::findById)
-                                .orElse(null))
+                        .author(authors.get(resultSet.getInt("author_id")))
+                        .genre(genres.get(resultSet.getInt("genre_id")))
                         .name(resultSet.getString("name"))
                         .year(resultSet.getInt("year"))
                         .build()
@@ -64,18 +77,49 @@ public class BookDaoJdbc implements BookDao {
                     (resultSet, rowNumber) -> Optional.of(
                             Book.builder()
                                     .id(resultSet.getInt("id"))
-                                    .author(ofNullable(resultSet.getInt("author_id"))
-                                            .flatMap(authorDao::findById)
+                                    .author(Optional.of(resultSet.getInt("author_id"))
+                                            .map(authorId -> {
+                                                try {
+                                                    return jdbcOperations.queryForObject(
+                                                            "select * from author where id = :author_id",
+                                                            of("author_id", authorId),
+                                                            (innerResultSet, innerRowNumber) ->
+                                                                    Author.builder()
+                                                                            .id(innerResultSet
+                                                                                    .getInt("id"))
+                                                                            .name(innerResultSet
+                                                                                    .getString("name"))
+                                                                            .build()
+                                                    );
+                                                } catch (EmptyResultDataAccessException e) {
+                                                    return null;
+                                                }
+                                            })
                                             .orElse(null))
-                                    .genre(ofNullable(resultSet.getInt("genre_id"))
-                                            .flatMap(genreDao::findById)
+                                    .genre(Optional.of(resultSet.getInt("genre_id"))
+                                            .map(genreId -> {
+                                                try {
+                                                    return jdbcOperations.queryForObject(
+                                                            "select * from genre where id = :genre_id",
+                                                            of("genre_id", genreId),
+                                                            (innerResultSet, innerRowNumber) ->
+                                                                    Genre.builder()
+                                                                            .id(innerResultSet
+                                                                                    .getInt("id"))
+                                                                            .name(innerResultSet
+                                                                                    .getString("name"))
+                                                                            .build()
+                                                    );
+                                                } catch (EmptyResultDataAccessException e) {
+                                                    return null;
+                                                }
+                                            })
                                             .orElse(null))
                                     .name(resultSet.getString("name"))
                                     .year(resultSet.getInt("year"))
                                     .build()
                     ));
-        } catch (
-                EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
     }

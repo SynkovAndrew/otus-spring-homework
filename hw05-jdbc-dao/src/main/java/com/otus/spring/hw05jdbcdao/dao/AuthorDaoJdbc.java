@@ -1,15 +1,18 @@
 package com.otus.spring.hw05jdbcdao.dao;
 
 import com.otus.spring.hw05jdbcdao.domain.Author;
+import com.otus.spring.hw05jdbcdao.domain.Book;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.google.common.collect.ImmutableMap.of;
+import static java.util.stream.Collectors.groupingBy;
 
 @Repository
 @RequiredArgsConstructor
@@ -28,9 +31,20 @@ public class AuthorDaoJdbc implements AuthorDao {
 
     @Override
     public List<Author> findAll() {
+        final Map<Integer, List<Book>> booksGroupedByAuthor = jdbcOperations.query("select * from book", of(),
+                (resultSet, rowNumber) -> Book.builder()
+                        .id(resultSet.getInt("id"))
+                        .name(resultSet.getString("name"))
+                        .author(Author.builder().id(resultSet.getInt("author_id")).build())
+                        .year(resultSet.getInt("year"))
+                        .build())
+                .stream()
+                .collect(groupingBy(book -> book.getAuthor().getId()));
+
         return jdbcOperations.query("select * from author", of(),
                 (resultSet, rowNumber) -> Author.builder()
                         .id(resultSet.getInt("id"))
+                        .books(booksGroupedByAuthor.get(resultSet.getInt("id")))
                         .name(resultSet.getString("name"))
                         .build()
         );
@@ -43,6 +57,16 @@ public class AuthorDaoJdbc implements AuthorDao {
                     (resultSet, rowNumber) -> Optional.of(
                             Author.builder()
                                     .id(resultSet.getInt("id"))
+                                    .books(
+                                            jdbcOperations.query("select * from book where author_id = :author_id",
+                                                    of("author_id", id),
+                                                    (innerResultSet, innerRowNumber) -> Book.builder()
+                                                            .id(innerResultSet.getInt("id"))
+                                                            .name(innerResultSet.getString("name"))
+                                                            .year(innerResultSet.getInt("year"))
+                                                            .build()
+                                            )
+                                    )
                                     .name(resultSet.getString("name"))
                                     .build()
                     ));

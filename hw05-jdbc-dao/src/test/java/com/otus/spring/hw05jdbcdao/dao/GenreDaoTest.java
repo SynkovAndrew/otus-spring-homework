@@ -79,6 +79,10 @@ public class GenreDaoTest {
         assertThat(genre).isNotNull();
         assertThat(genre).extracting("id").isEqualTo(4);
         assertThat(genre).extracting("name").isEqualTo("Psychology");
+        assertThat(genre.getBooks()).extracting("name")
+                .containsOnly("The Psychopathology of Everyday Life");
+        assertThat(genre.getBooks()).extracting("year")
+                .containsOnly(1904);
     }
 
     @Test
