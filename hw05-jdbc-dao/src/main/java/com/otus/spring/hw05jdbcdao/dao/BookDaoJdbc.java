@@ -3,7 +3,9 @@ package com.otus.spring.hw05jdbcdao.dao;
 import com.otus.spring.hw05jdbcdao.domain.Author;
 import com.otus.spring.hw05jdbcdao.domain.Book;
 import com.otus.spring.hw05jdbcdao.domain.Genre;
+import com.otus.spring.hw05jdbcdao.exception.ReferencedObjectNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
@@ -23,17 +25,21 @@ public class BookDaoJdbc implements BookDao {
     private final NamedParameterJdbcOperations jdbcOperations;
 
     @Override
-    public int create(final Book book) {
-        return jdbcOperations.update(
-                "insert into book (author_id, genre_id, name, year) " +
-                        "values (:author_id, :genre_id, :name, :year)",
-                of(
-                        "author_id", ofNullable(book.getAuthor()).map(Author::getId).orElse(null),
-                        "genre_id", ofNullable(book.getGenre()).map(Genre::getId).orElse(null),
-                        "name", book.getName(),
-                        "year", book.getYear()
-                )
-        );
+    public int create(final Book book) throws ReferencedObjectNotFoundException {
+        try {
+            return jdbcOperations.update(
+                    "insert into book (author_id, genre_id, name, year) " +
+                            "values (:author_id, :genre_id, :name, :year)",
+                    of(
+                            "author_id", ofNullable(book.getAuthor()).map(Author::getId).orElse(null),
+                            "genre_id", ofNullable(book.getGenre()).map(Genre::getId).orElse(null),
+                            "name", book.getName(),
+                            "year", book.getYear()
+                    )
+            );
+        } catch (DataIntegrityViolationException e) {
+            throw new ReferencedObjectNotFoundException();
+        }
     }
 
     @Override
@@ -125,16 +131,20 @@ public class BookDaoJdbc implements BookDao {
     }
 
     @Override
-    public int update(final int id, final Book book) {
-        return jdbcOperations.update("update book set name = :name, year = :year, " +
-                        "author_id = :author_id, genre_id = :genre_id where id = :id",
-                of(
-                        "id", id,
-                        "author_id", ofNullable(book.getAuthor()).map(Author::getId).orElse(null),
-                        "genre_id", ofNullable(book.getGenre()).map(Genre::getId).orElse(null),
-                        "name", book.getName(),
-                        "year", book.getYear()
-                )
-        );
+    public int update(final int id, final Book book) throws ReferencedObjectNotFoundException {
+        try {
+            return jdbcOperations.update("update book set name = :name, year = :year, " +
+                            "author_id = :author_id, genre_id = :genre_id where id = :id",
+                    of(
+                            "id", id,
+                            "author_id", ofNullable(book.getAuthor()).map(Author::getId).orElse(null),
+                            "genre_id", ofNullable(book.getGenre()).map(Genre::getId).orElse(null),
+                            "name", book.getName(),
+                            "year", book.getYear()
+                    )
+            );
+        } catch (DataIntegrityViolationException e) {
+            throw new ReferencedObjectNotFoundException();
+        }
     }
 }

@@ -9,6 +9,10 @@ docker run --rm -e POSTGRES_PASSWORD=postgres -d -p 5432:5432 postgres
 Then build application with maven and run it.
 ```
 mvn clean package
+java -jar target/hw05-jdbc-dao-0.0.1-SNAPSHOT.jar
 ```
-
+or
+```
+mvn spring-boot:run
+```
 

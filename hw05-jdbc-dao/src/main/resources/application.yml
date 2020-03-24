@@ -3,6 +3,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres
-    initialization-mode: always
+    initialization-mode: embedded
     schema: schema.sql
     data: data.sql

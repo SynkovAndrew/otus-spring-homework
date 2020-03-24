@@ -3,6 +3,7 @@ package com.otus.spring.hw05jdbcdao.dao;
 import com.otus.spring.hw05jdbcdao.domain.Author;
 import com.otus.spring.hw05jdbcdao.domain.Book;
 import com.otus.spring.hw05jdbcdao.domain.Genre;
+import com.otus.spring.hw05jdbcdao.exception.ReferencedObjectNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @JdbcTest
 @Import(BookDaoJdbc.class)
@@ -22,7 +24,7 @@ public class BookDaoTest {
 
     @Test
     @DisplayName("Create new book")
-    public void createTest() {
+    public void createTest() throws ReferencedObjectNotFoundException {
         final Book book = Book.builder()
                 .name("Nineteen Eighty-Four")
                 .author(Author.builder().id(3).build())
@@ -36,6 +38,19 @@ public class BookDaoTest {
         assertThat(all).size().isEqualTo(7);
         assertThat(all).extracting("id").isNotNull();
         assertThat(all).extracting("name").containsOnlyOnce("Nineteen Eighty-Four");
+    }
+
+    @Test
+    @DisplayName("Create new book with absent author")
+    public void createWithAbsentAuthorTest() {
+        final Book book = Book.builder()
+                .name("Nineteen Eighty-Four")
+                .author(Author.builder().id(134).build())
+                .genre(Genre.builder().id(5).build())
+                .year(1949)
+                .build();
+
+        assertThrows(ReferencedObjectNotFoundException.class, () -> bookDao.create(book));
     }
 
     @Test
@@ -108,7 +123,7 @@ public class BookDaoTest {
 
     @Test
     @DisplayName("Update absent book")
-    public void updateAbsentTest() {
+    public void updateAbsentTest() throws ReferencedObjectNotFoundException {
         final int result = bookDao.update(12, Book.builder()
                 .name("The Black Swan")
                 .year(1967)
@@ -127,7 +142,7 @@ public class BookDaoTest {
 
     @Test
     @DisplayName("Update book")
-    public void updateTest() {
+    public void updateTest() throws ReferencedObjectNotFoundException {
         final int result = bookDao.update(4, Book.builder()
                 .name("The Black Swan")
                 .year(1967)
@@ -149,5 +164,21 @@ public class BookDaoTest {
         assertThat(book).extracting("author.id").isEqualTo(5);
         assertThat(book).extracting("genre.name").isEqualTo("History");
         assertThat(book).extracting("genre.id").isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("Update book with absent author")
+    public void updateWithAbsentAuthorTest() {
+        assertThrows(ReferencedObjectNotFoundException.class,
+                () -> bookDao.update(4, Book.builder()
+                        .name("The Black Swan")
+                        .year(1235)
+                        .author(Author.builder()
+                                .id(1)
+                                .build())
+                        .genre(Genre.builder()
+                                .id(154)
+                                .build())
+                        .build()));
     }
 }
