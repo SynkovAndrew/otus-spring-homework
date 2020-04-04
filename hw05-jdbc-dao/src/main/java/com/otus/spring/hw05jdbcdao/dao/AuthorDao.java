@@ -10,9 +10,17 @@ public interface AuthorDao {
 
     int deleteById(int id);
 
-    List<Author> findAll();
+    List<Author> findAll(Options options);
 
-    Optional<Author> findById(int id);
+    default List<Author> findAll() {
+        return findAll(Options.builder().build());
+    }
+
+    Optional<Author> findById(int id, Options options);
+
+    default Optional<Author> findById(int id) {
+        return findById(id, Options.builder().build());
+    }
 
     int update(int id, Author author);
 }

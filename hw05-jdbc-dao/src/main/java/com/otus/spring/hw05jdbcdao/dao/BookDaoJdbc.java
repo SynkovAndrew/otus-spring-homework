@@ -48,28 +48,32 @@ public class BookDaoJdbc implements BookDao {
     }
 
     @Override
-    public List<Book> findAll() {
-        final Map<Integer, Author> authors = jdbcOperations.query("select * from author", of(),
-                (resultSet, rowNumber) -> Author.builder()
-                        .id(resultSet.getInt("id"))
-                        .name(resultSet.getString("name"))
-                        .build())
-                .stream()
-                .collect(toMap(Author::getId, Function.identity()));
+    public List<Book> findAll(final Options options) {
+        final Map<Integer, Author> authors = options.isSelectReferencedObjects() ?
+                jdbcOperations.query("select id, name  from author", of(),
+                        (resultSet, rowNumber) -> Author.builder()
+                                .id(resultSet.getInt("id"))
+                                .name(resultSet.getString("name"))
+                                .build())
+                        .stream()
+                        .collect(toMap(Author::getId, Function.identity())) : null;
 
-        final Map<Integer, Genre> genres = jdbcOperations.query("select * from genre", of(),
-                (resultSet, rowNumber) -> Genre.builder()
-                        .id(resultSet.getInt("id"))
-                        .name(resultSet.getString("name"))
-                        .build())
-                .stream()
-                .collect(toMap(Genre::getId, Function.identity()));
+        final Map<Integer, Genre> genres = options.isSelectReferencedObjects() ?
+                jdbcOperations.query("select id, name from genre", of(),
+                        (resultSet, rowNumber) -> Genre.builder()
+                                .id(resultSet.getInt("id"))
+                                .name(resultSet.getString("name"))
+                                .build())
+                        .stream()
+                        .collect(toMap(Genre::getId, Function.identity())) : null;
 
-        return jdbcOperations.query("select * from book", of(),
+        return jdbcOperations.query("select id, author_id, genre_id, name, year  from book", of(),
                 (resultSet, rowNumber) -> Book.builder()
                         .id(resultSet.getInt("id"))
-                        .author(authors.get(resultSet.getInt("author_id")))
-                        .genre(genres.get(resultSet.getInt("genre_id")))
+                        .author(options.isSelectReferencedObjects() ?
+                                authors.get(resultSet.getInt("author_id")) : null)
+                        .genre(options.isSelectReferencedObjects() ?
+                                genres.get(resultSet.getInt("genre_id")) : null)
                         .name(resultSet.getString("name"))
                         .year(resultSet.getInt("year"))
                         .build()
@@ -77,50 +81,53 @@ public class BookDaoJdbc implements BookDao {
     }
 
     @Override
-    public Optional<Book> findById(final int id) {
+    public Optional<Book> findById(final int id, final Options options) {
         try {
-            return jdbcOperations.queryForObject("select * from book where id = :id", of("id", id),
+            return jdbcOperations.queryForObject(
+                    "select id, author_id, genre_id, name, year from book where id = :id", of("id", id),
                     (resultSet, rowNumber) -> Optional.of(
                             Book.builder()
                                     .id(resultSet.getInt("id"))
-                                    .author(Optional.of(resultSet.getInt("author_id"))
-                                            .map(authorId -> {
-                                                try {
-                                                    return jdbcOperations.queryForObject(
-                                                            "select * from author where id = :author_id",
-                                                            of("author_id", authorId),
-                                                            (innerResultSet, innerRowNumber) ->
-                                                                    Author.builder()
-                                                                            .id(innerResultSet
-                                                                                    .getInt("id"))
-                                                                            .name(innerResultSet
-                                                                                    .getString("name"))
-                                                                            .build()
-                                                    );
-                                                } catch (EmptyResultDataAccessException e) {
-                                                    return null;
-                                                }
-                                            })
-                                            .orElse(null))
-                                    .genre(Optional.of(resultSet.getInt("genre_id"))
-                                            .map(genreId -> {
-                                                try {
-                                                    return jdbcOperations.queryForObject(
-                                                            "select * from genre where id = :genre_id",
-                                                            of("genre_id", genreId),
-                                                            (innerResultSet, innerRowNumber) ->
-                                                                    Genre.builder()
-                                                                            .id(innerResultSet
-                                                                                    .getInt("id"))
-                                                                            .name(innerResultSet
-                                                                                    .getString("name"))
-                                                                            .build()
-                                                    );
-                                                } catch (EmptyResultDataAccessException e) {
-                                                    return null;
-                                                }
-                                            })
-                                            .orElse(null))
+                                    .author(options.isSelectReferencedObjects() ?
+                                            Optional.of(resultSet.getInt("author_id"))
+                                                    .map(authorId -> {
+                                                        try {
+                                                            return jdbcOperations.queryForObject(
+                                                                    "select id, name from author where id = :author_id",
+                                                                    of("author_id", authorId),
+                                                                    (innerResultSet, innerRowNumber) ->
+                                                                            Author.builder()
+                                                                                    .id(innerResultSet
+                                                                                            .getInt("id"))
+                                                                                    .name(innerResultSet
+                                                                                            .getString("name"))
+                                                                                    .build()
+                                                            );
+                                                        } catch (EmptyResultDataAccessException e) {
+                                                            return null;
+                                                        }
+                                                    })
+                                                    .orElse(null) : null)
+                                    .genre(options.isSelectReferencedObjects() ?
+                                            Optional.of(resultSet.getInt("genre_id"))
+                                                    .map(genreId -> {
+                                                        try {
+                                                            return jdbcOperations.queryForObject(
+                                                                    "select id, name from genre where id = :genre_id",
+                                                                    of("genre_id", genreId),
+                                                                    (innerResultSet, innerRowNumber) ->
+                                                                            Genre.builder()
+                                                                                    .id(innerResultSet
+                                                                                            .getInt("id"))
+                                                                                    .name(innerResultSet
+                                                                                            .getString("name"))
+                                                                                    .build()
+                                                            );
+                                                        } catch (EmptyResultDataAccessException e) {
+                                                            return null;
+                                                        }
+                                                    })
+                                                    .orElse(null) : null)
                                     .name(resultSet.getString("name"))
                                     .year(resultSet.getInt("year"))
                                     .build()

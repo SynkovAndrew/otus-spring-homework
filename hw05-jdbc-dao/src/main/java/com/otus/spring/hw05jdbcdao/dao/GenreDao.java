@@ -10,9 +10,17 @@ public interface GenreDao {
 
     int deleteById(int id);
 
-    List<Genre> findAll();
+    List<Genre> findAll(Options options);
 
-    Optional<Genre> findById(int id);
+    default List<Genre> findAll() {
+        return findAll(Options.builder().build());
+    }
+
+    Optional<Genre> findById(int id, Options options);
+
+    default Optional<Genre> findById(int id) {
+        return findById(id, Options.builder().build());
+    }
 
     int update(int id, Genre genre);
 }

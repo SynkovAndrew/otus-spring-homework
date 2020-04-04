@@ -30,43 +30,44 @@ public class AuthorDaoJdbc implements AuthorDao {
     }
 
     @Override
-    public List<Author> findAll() {
-        final Map<Integer, List<Book>> booksGroupedByAuthor = jdbcOperations.query("select * from book", of(),
-                (resultSet, rowNumber) -> Book.builder()
-                        .id(resultSet.getInt("id"))
-                        .name(resultSet.getString("name"))
-                        .author(Author.builder().id(resultSet.getInt("author_id")).build())
-                        .year(resultSet.getInt("year"))
-                        .build())
-                .stream()
-                .collect(groupingBy(book -> book.getAuthor().getId()));
-
-        return jdbcOperations.query("select * from author", of(),
+    public List<Author> findAll(final Options options) {
+        final Map<Integer, List<Book>> booksGroupedByAuthor = options.isSelectReferencedObjects() ?
+                jdbcOperations.query("select id, name, author_id, year from book", of(),
+                        (resultSet, rowNumber) -> Book.builder()
+                                .id(resultSet.getInt("id"))
+                                .name(resultSet.getString("name"))
+                                .author(Author.builder().id(resultSet.getInt("author_id")).build())
+                                .year(resultSet.getInt("year"))
+                                .build())
+                        .stream()
+                        .collect(groupingBy(book -> book.getAuthor().getId())) : null;
+        return jdbcOperations.query("select id, name from author", of(),
                 (resultSet, rowNumber) -> Author.builder()
                         .id(resultSet.getInt("id"))
-                        .books(booksGroupedByAuthor.get(resultSet.getInt("id")))
+                        .books(options.isSelectReferencedObjects() ?
+                                booksGroupedByAuthor.get(resultSet.getInt("id")) : null)
                         .name(resultSet.getString("name"))
                         .build()
         );
     }
 
     @Override
-    public Optional<Author> findById(final int id) {
+    public Optional<Author> findById(final int id, final Options options) {
         try {
-            return jdbcOperations.queryForObject("select * from author where id = :id", of("id", id),
+            return jdbcOperations.queryForObject("select id, name from author where id = :id", of("id", id),
                     (resultSet, rowNumber) -> Optional.of(
                             Author.builder()
                                     .id(resultSet.getInt("id"))
-                                    .books(
-                                            jdbcOperations.query("select * from book where author_id = :author_id",
+                                    .books(options.isSelectReferencedObjects() ?
+                                            jdbcOperations.query(
+                                                    "select id, name, year from book where author_id = :author_id",
                                                     of("author_id", id),
                                                     (innerResultSet, innerRowNumber) -> Book.builder()
                                                             .id(innerResultSet.getInt("id"))
                                                             .name(innerResultSet.getString("name"))
                                                             .year(innerResultSet.getInt("year"))
                                                             .build()
-                                            )
-                                    )
+                                            ) : null)
                                     .name(resultSet.getString("name"))
                                     .build()
                     ));

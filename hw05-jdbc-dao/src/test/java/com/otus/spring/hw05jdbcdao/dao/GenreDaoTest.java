@@ -75,7 +75,7 @@ public class GenreDaoTest {
     @Test
     @DisplayName("Find genre by id")
     public void findByIdTest() {
-        final Genre genre = genreDao.findById(4).get();
+        final Genre genre = genreDao.findById(4, Options.builder().selectReferencedObjects(true).build()).get();
         assertThat(genre).isNotNull();
         assertThat(genre).extracting("id").isEqualTo(4);
         assertThat(genre).extracting("name").isEqualTo("Psychology");

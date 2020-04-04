@@ -11,9 +11,17 @@ public interface BookDao {
 
     int deleteById(int id);
 
-    List<Book> findAll();
+    List<Book> findAll(Options options);
 
-    Optional<Book> findById(int id);
+    default List<Book> findAll() {
+        return findAll(Options.builder().build());
+    }
+
+    Optional<Book> findById(int id, Options options);
+
+    default Optional<Book> findById(int id) {
+        return findById(id, Options.builder().build());
+    }
 
     int update(int id, Book book) throws ReferencedObjectNotFoundException;
 }

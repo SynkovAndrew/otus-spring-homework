@@ -30,8 +30,9 @@ public class GenreDaoJdbc implements GenreDao {
     }
 
     @Override
-    public List<Genre> findAll() {
-        final Map<Integer, List<Book>> booksGroupedByGenre = jdbcOperations.query("select * from book", of(),
+    public List<Genre> findAll(final Options options) {
+        final Map<Integer, List<Book>> booksGroupedByGenre = options.isSelectReferencedObjects() ? jdbcOperations.query(
+                "select id, genre_id, name, year from book", of(),
                 (resultSet, rowNumber) -> Book.builder()
                         .id(resultSet.getInt("id"))
                         .name(resultSet.getString("name"))
@@ -39,33 +40,35 @@ public class GenreDaoJdbc implements GenreDao {
                         .year(resultSet.getInt("year"))
                         .build())
                 .stream()
-                .collect(groupingBy(book -> book.getGenre().getId()));
+                .collect(groupingBy(book -> book.getGenre().getId())) : null;
 
-        return jdbcOperations.query("select * from genre", of(),
+        return jdbcOperations.query("select id, name from genre", of(),
                 (resultSet, rowNumber) -> Genre.builder()
                         .id(resultSet.getInt("id"))
-                        .books(booksGroupedByGenre.get(resultSet.getInt("id")))
+                        .books(options.isSelectReferencedObjects() ?
+                                booksGroupedByGenre.get(resultSet.getInt("id")) : null)
                         .name(resultSet.getString("name"))
                         .build()
         );
     }
 
     @Override
-    public Optional<Genre> findById(final int id) {
+    public Optional<Genre> findById(final int id, final Options options) {
         try {
-            return jdbcOperations.queryForObject("select * from genre where id = :id", of("id", id),
+            return jdbcOperations.queryForObject("select id, name from genre where id = :id", of("id", id),
                     (resultSet, rowNumber) -> Optional.of(
                             Genre.builder()
                                     .id(resultSet.getInt("id"))
-                                    .books(
-                                            jdbcOperations.query("select * from book where genre_id = :genre_id",
+                                    .books(options.isSelectReferencedObjects() ?
+                                            jdbcOperations.query(
+                                                    "select id, name, year from book where genre_id = :genre_id",
                                                     of("genre_id", id),
                                                     (innerResultSet, innerRowNumber) -> Book.builder()
                                                             .id(innerResultSet.getInt("id"))
                                                             .name(innerResultSet.getString("name"))
                                                             .year(innerResultSet.getInt("year"))
                                                             .build()
-                                            )
+                                            ) : null
                                     )
                                     .name(resultSet.getString("name"))
                                     .build()

@@ -75,7 +75,7 @@ public class AuthorDaoTest {
     @Test
     @DisplayName("Find author by id")
     public void findByIdTest() {
-        final Author author = authorDao.findById(3).get();
+        final Author author = authorDao.findById(3, Options.builder().selectReferencedObjects(true).build()).get();
         assertThat(author).isNotNull();
         assertThat(author).extracting("id").isEqualTo(3);
         assertThat(author).extracting("name").isEqualTo("George Orwell");

@@ -89,7 +89,7 @@ public class BookDaoTest {
     @Test
     @DisplayName("Find all books")
     public void findAllTest() {
-        final List<Book> all = bookDao.findAll();
+        final List<Book> all = bookDao.findAll(Options.builder().selectReferencedObjects(true).build());
         assertThat(all).size().isEqualTo(6);
         assertThat(all).extracting("id").containsOnly(1, 2, 3, 4, 5, 6);
         assertThat(all).extracting("name")
@@ -111,7 +111,7 @@ public class BookDaoTest {
     @Test
     @DisplayName("Find book by id")
     public void findByIdTest() {
-        final Book book = bookDao.findById(2).get();
+        final Book book = bookDao.findById(2, Options.builder().selectReferencedObjects(true).build()).get();
         assertThat(book).isNotNull();
         assertThat(book).extracting("id").isEqualTo(2);
         assertThat(book).extracting("name").isEqualTo("The Black Obelisk");
@@ -155,7 +155,7 @@ public class BookDaoTest {
                 .build());
         assertThat(result).isEqualTo(1);
 
-        final Book book = bookDao.findById(4).get();
+        final Book book = bookDao.findById(4, Options.builder().selectReferencedObjects(true).build()).get();
         assertThat(book).isNotNull();
         assertThat(book).extracting("id").isEqualTo(4);
         assertThat(book).extracting("year").isEqualTo(1967);
