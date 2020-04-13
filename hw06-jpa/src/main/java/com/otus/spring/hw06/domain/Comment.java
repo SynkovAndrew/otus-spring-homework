@@ -6,21 +6,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Data
 @Builder
-@Table(name = "genres")
+@Table(name = "comments")
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Genre {
-    @OneToMany(mappedBy = "books")
-    private List<Book> books;
+public class Comment {
+    @ManyToOne
+    @JoinColumn(name = "book_id", nullable = false)
+    private Book book;
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "value", nullable = false, length = 1000)
+    private String value;
 }
