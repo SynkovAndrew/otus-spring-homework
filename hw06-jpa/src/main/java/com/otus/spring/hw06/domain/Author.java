@@ -16,11 +16,6 @@ import java.util.Set;
 @AllArgsConstructor
 public class Author {
     @ManyToMany(mappedBy = "authors")
-    @JoinTable(
-            name = "books_authors",
-            joinColumns = @JoinColumn(name = "author_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "book_id", referencedColumnName = "id")
-    )
     private Set<Book> books;
     @Id
     @Column(name = "id")

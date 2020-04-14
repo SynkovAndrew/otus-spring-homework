@@ -1,25 +1,44 @@
 package com.otus.spring.hw06.repository;
 
+import com.otus.spring.hw06.domain.Author;
+import com.otus.spring.hw06.domain.Book;
+import com.otus.spring.hw06.domain.Genre;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
+
+import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @JdbcTest
+@Import(BookRepositoryJpa.class)
 public class BookRepositoryTest {
-/*    @Autowired
-    private BookDao bookDao;
+    @Autowired
+    private TestEntityManager entityManager;
+    @Autowired
+    private BookRepository repository;
 
     @Test
     @DisplayName("Create new book")
-    public void createTest() throws ReferencedObjectNotFoundException {
+    public void createTest() {
         final Book book = Book.builder()
                 .name("Nineteen Eighty-Four")
-                .author(Author.builder().id(3).build())
+                .authors(newHashSet(
+                        Author.builder().id(3).build()
+                ))
                 .genre(Genre.builder().id(5).build())
                 .year(1949)
                 .build();
 
-        bookDao.create(book);
+        repository.(book);
 
-        final List<Book> all = bookDao.findAll();
+        final List<Book> all = findAll();
         assertThat(all).size().isEqualTo(7);
         assertThat(all).extracting("id").isNotNull();
         assertThat(all).extracting("name").containsOnlyOnce("Nineteen Eighty-Four");
@@ -165,5 +184,11 @@ public class BookRepositoryTest {
                                 .id(154)
                                 .build())
                         .build()));
-    }*/
+    }
+
+    private List<Book> findAll() {
+        return entityManager.getEntityManager()
+                .createQuery("select b from Book b ", Book.class)
+                .getResultList();
+    }
 }

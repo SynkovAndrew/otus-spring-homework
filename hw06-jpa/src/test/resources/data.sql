@@ -1,4 +1,4 @@
-insert into genres (id, name)
+insert into genres (name)
 values (1, 'Comedy'),
        (2, 'History'),
        (3, 'Detective'),

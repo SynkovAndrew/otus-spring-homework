@@ -27,7 +27,7 @@ create table books_authors
 (
     author_id integer not null references authors (id),
     book_id  integer not null references books (id),
-    primary key ("author_id", "book_id")
+    primary key (author_id, book_id)
 );
 
 create table comments

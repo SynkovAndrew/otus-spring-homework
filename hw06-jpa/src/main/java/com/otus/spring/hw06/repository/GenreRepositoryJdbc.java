@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@RequiredArgsConstructor
 public class GenreRepositoryJdbc implements GenreRepository {
     @Override
     public int create(Genre genre) {

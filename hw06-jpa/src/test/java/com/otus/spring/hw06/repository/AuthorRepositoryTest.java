@@ -17,9 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Import(AuthorRepositoryJpa.class)
 public class AuthorRepositoryTest {
     @Autowired
-    private AuthorRepository repository;
+    private TestEntityManager entityManager;
     @Autowired
-    private TestEntityManager testEntityManager;
+    private AuthorRepository repository;
 
     @Test
     @DisplayName("Delete absent author")
@@ -50,7 +50,7 @@ public class AuthorRepositoryTest {
     }
 
     private List<Author> findAll() {
-        return testEntityManager.getEntityManager()
+        return entityManager.getEntityManager()
                 .createQuery("select a from Author a ", Author.class)
                 .getResultList();
     }

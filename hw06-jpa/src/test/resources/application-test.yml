@@ -5,5 +5,8 @@ spring:
     password: password
     driverClassName: org.h2.Driver
     initialization-mode: always
-    schema: schema.sql
-    data: data.sql
+  jpa:
+    generate-ddl: false
+    show-sql: true
+    hibernate:
+      ddl-auto: none
