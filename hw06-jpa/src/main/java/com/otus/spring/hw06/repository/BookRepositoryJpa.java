@@ -21,9 +21,12 @@ public class BookRepositoryJpa implements BookRepository {
     @Override
     @Transactional
     public void deleteById(final int id) {
-        final Query query = entityManager.createQuery("delete from Book b where b.id = :id");
-        query.setParameter("id", id);
-        query.executeUpdate();
+        entityManager.createNativeQuery("delete from books_authors where book_id = :book_id")
+                .setParameter("book_id", id)
+                .executeUpdate();
+        entityManager.createQuery("delete from Book b where b.id = :id")
+                .setParameter("id", id)
+                .executeUpdate();
     }
 
     @Override

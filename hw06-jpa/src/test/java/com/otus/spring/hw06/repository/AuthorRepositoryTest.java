@@ -30,7 +30,6 @@ public class AuthorRepositoryTest extends AbstractDataJpaTest<Author> {
     @DisplayName("Delete absent author")
     public void deleteAbsentTest() {
         repository.deleteById(12);
-
         final List<Author> all = findAll();
         assertThat(all).size().isEqualTo(4);
         assertThat(all).extracting(Author::getId).containsOnly(1, 2, 3, 4);
@@ -42,7 +41,6 @@ public class AuthorRepositoryTest extends AbstractDataJpaTest<Author> {
     @DisplayName("Delete author")
     public void deleteTest() {
         repository.deleteById(4);
-
         final List<Author> all = findAll();
         assertThat(all).size().isEqualTo(3);
         assertThat(all).extracting(Author::getId).containsOnly(1, 2, 3);
@@ -80,9 +78,7 @@ public class AuthorRepositoryTest extends AbstractDataJpaTest<Author> {
     @DisplayName("Save new author")
     public void saveTest() {
         final Author author = Author.builder().name("Lev Tolstoy").build();
-
         repository.save(author);
-
         final List<Author> all = findAll();
         assertThat(all).size().isEqualTo(5);
         assertThat(all).extracting(Author::getId).isNotNull();
@@ -93,7 +89,6 @@ public class AuthorRepositoryTest extends AbstractDataJpaTest<Author> {
     @DisplayName("Update absent author")
     public void updateAbsentTest() {
         repository.update(11, Author.builder().name("Nikolai Michailowitsch Karamsin").build());
-
         final var all = findAll();
         assertThat(all).extracting("name").doesNotContain("Nikolai Michailowitsch Karamsin");
     }
@@ -102,7 +97,6 @@ public class AuthorRepositoryTest extends AbstractDataJpaTest<Author> {
     @DisplayName("Update author")
     public void updateTest() {
         repository.update(1, Author.builder().name("Nikolai Michailowitsch Karamsin").build());
-
         final Author author = findOne(1);
         assertThat(author).isNotNull();
         assertThat(author).extracting(Author::getId).isEqualTo(1);

@@ -151,7 +151,6 @@ public class BookRepositoryTest extends AbstractDataJpaTest<Book> {
                 .authors(newHashSet(Author.builder().id(1).build(), Author.builder().id(2).build()))
                 .genre(Genre.builder().id(2).build())
                 .build());
-
         final Book book = findOne(4);
         assertThat(book).isNotNull();
         assertThat(book).extracting("id").isEqualTo(4);
