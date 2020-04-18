@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -15,8 +16,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Author {
-    @ManyToMany(mappedBy = "authors")
-    private Set<Book> books;
+/*    @ManyToMany(mappedBy = "authors")
+    private Set<Book> books = new HashSet<>();*/
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

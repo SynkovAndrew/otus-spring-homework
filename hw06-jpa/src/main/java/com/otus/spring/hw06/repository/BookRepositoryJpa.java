@@ -52,8 +52,11 @@ public class BookRepositoryJpa implements BookRepository {
 
     @Override
     @Transactional
-    public Book update(final int id, final Book book) {
-        book.setId(id);
-        return save(book);
+    public Optional<Book> update(final int id, final Book book) {
+        return findById(id)
+                .map(obj -> {
+                    book.setId(id);
+                    return save(book);
+                });
     }
 }

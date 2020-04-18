@@ -14,9 +14,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Comment {
-    @ManyToOne
-    @JoinColumn(name = "book_id", nullable = false)
-    private Book book;
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

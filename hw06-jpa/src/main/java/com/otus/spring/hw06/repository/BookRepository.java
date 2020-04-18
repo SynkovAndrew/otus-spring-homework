@@ -15,5 +15,5 @@ public interface BookRepository {
 
     Book save(Book book);
 
-    Book update(int id, Book book);
+    Optional<Book> update(int id, Book book);
 }

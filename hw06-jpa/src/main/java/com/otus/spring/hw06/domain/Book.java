@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -22,9 +23,10 @@ public class Book {
             joinColumns = @JoinColumn(name = "book_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "author_id", referencedColumnName = "id")
     )
-    private Set<Author> authors;
-    @OneToMany(mappedBy = "book")
-    private List<Comment> comments;
+    private Set<Author> authors = new HashSet<>();
+    @OneToMany
+    @JoinColumn(name = "book_id", nullable = false)
+    private Set<Comment> comments;
     @ManyToOne
     @JoinColumn(name = "genre_id", nullable = false)
     private Genre genre;

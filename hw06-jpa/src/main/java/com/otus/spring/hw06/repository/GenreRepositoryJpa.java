@@ -1,8 +1,6 @@
 package com.otus.spring.hw06.repository;
 
 import com.otus.spring.hw06.domain.Genre;
-import com.otus.spring.hw06.domain.Genre;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +14,7 @@ import java.util.Optional;
 import static java.util.Optional.ofNullable;
 
 @Repository
-public class GenreRepositoryJdbc implements GenreRepository {
+public class GenreRepositoryJpa implements GenreRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -54,8 +52,11 @@ public class GenreRepositoryJdbc implements GenreRepository {
 
     @Override
     @Transactional
-    public Genre update(final int id, final Genre genre) {
-        genre.setId(id);
-        return save(genre);
+    public Optional<Genre> update(final int id, final Genre genre) {
+        return findById(id)
+                .map(obj -> {
+                    genre.setId(id);
+                    return save(genre);
+                });
     }
 }

@@ -15,5 +15,5 @@ public interface GenreRepository {
 
     Genre save(Genre genre);
 
-    Genre update(int id, Genre genre);
+    Optional<Genre> update(int id, Genre genre);
 }

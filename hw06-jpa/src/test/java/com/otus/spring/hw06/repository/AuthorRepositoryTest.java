@@ -1,6 +1,7 @@
 package com.otus.spring.hw06.repository;
 
 import com.otus.spring.hw06.domain.Author;
+import com.otus.spring.hw06.domain.Genre;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,8 +94,8 @@ public class AuthorRepositoryTest extends AbstractDataJpaTest<Author> {
     public void updateAbsentTest() {
         repository.update(11, Author.builder().name("Nikolai Michailowitsch Karamsin").build());
 
-        final Author author = findOne(11);
-        assertThat(author).isNull();
+        final var all = findAll();
+        assertThat(all).extracting("name").doesNotContain("Nikolai Michailowitsch Karamsin");
     }
 
     @Test

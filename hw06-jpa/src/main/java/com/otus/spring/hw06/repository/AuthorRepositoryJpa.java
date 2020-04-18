@@ -1,7 +1,6 @@
 package com.otus.spring.hw06.repository;
 
 import com.otus.spring.hw06.domain.Author;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,8 +52,11 @@ public class AuthorRepositoryJpa implements AuthorRepository {
 
     @Override
     @Transactional
-    public Author update(final int id, final Author author) {
-        author.setId(id);
-        return save(author);
+    public Optional<Author> update(final int id, final Author author) {
+        return findById(id)
+                .map(obj -> {
+                    author.setId(id);
+                    return save(author);
+                });
     }
 }

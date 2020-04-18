@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AuthorRepository {
-    Author save(Author author);
-
     void deleteById(int id);
 
     List<Author> findAll();
 
     Optional<Author> findById(int id);
 
-    Author update(int id, Author author);
+    Author save(Author author);
+
+    Optional<Author> update(int id, Author author);
 }

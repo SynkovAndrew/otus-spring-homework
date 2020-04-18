@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,26 +43,9 @@ public class BookRepositoryTest extends AbstractDataJpaTest<Book> {
         repository.save(book);
 
         final List<Book> all = findAll();
-        assertThat(all).size().isEqualTo(7);
-        assertThat(all).extracting("id").isNotNull();
+        assertThat(all).size().isEqualTo(8);
         assertThat(all).extracting("name").containsOnlyOnce("Nineteen Eighty-Four");
-    }
-
-    @Test
-    @DisplayName("Create new book with absent author")
-    public void createWithAbsentAuthorTest() {
-        final Book book = Book.builder()
-                .name("Nineteen Eighty-Four")
-                .authors(newHashSet(Author.builder().id(134).build()))
-                .genre(Genre.builder().id(5).build())
-                .year(1949)
-                .build();
-        repository.save(book);
-
-        final List<Book> all = findAll();
-        assertThat(all).size().isEqualTo(7);
-        assertThat(all).extracting("id").isNotNull();
-        assertThat(all).extracting("name").containsOnlyOnce("Nineteen Eighty-Four");
+        assertThat(all).extracting("year").containsOnlyOnce(1949);
     }
 
     @Test
@@ -70,7 +54,7 @@ public class BookRepositoryTest extends AbstractDataJpaTest<Book> {
         repository.deleteById(123);
 
         final List<Book> all = repository.findAll();
-        assertThat(all).size().isEqualTo(6);
+        assertThat(all).size().isEqualTo(7);
     }
 
     @Test
@@ -79,13 +63,13 @@ public class BookRepositoryTest extends AbstractDataJpaTest<Book> {
         repository.deleteById(4);
 
         final List<Book> all = repository.findAll();
-        assertThat(all).size().isEqualTo(5);
-        assertThat(all).extracting("id").containsOnly(1, 2, 3, 5, 6);
+        assertThat(all).size().isEqualTo(6);
+        assertThat(all).extracting("id").containsOnly(1, 2, 3, 5, 6, 7);
         assertThat(all).extracting("name")
                 .containsOnly("The Night in Lisbon", "The Black Obelisk", "The Old Man and the Sea",
-                        "Animal Farm", "The Psychopathology of Everyday Life");
+                        "Animal Farm", "The Psychopathology of Everyday Life", "The Authorless Book");
         assertThat(all).extracting("year")
-                .containsOnly(1964, 1957, 1951, 1945, 1904);
+                .containsOnly(1964, 1957, 1951, 1945, 1904, 1974);
     }
 
     @Test
@@ -98,18 +82,29 @@ public class BookRepositoryTest extends AbstractDataJpaTest<Book> {
     @DisplayName("Find all books")
     public void findAllTest() {
         final List<Book> all = repository.findAll();
-        assertThat(all).size().isEqualTo(6);
-        assertThat(all).extracting("id").containsOnly(1, 2, 3, 4, 5, 6);
+        assertThat(all).size().isEqualTo(7);
+        assertThat(all).extracting("id").containsOnly(1, 2, 3, 4, 5, 6, 7);
         assertThat(all).extracting("name")
-                .containsOnly("The Night in Lisbon", "The Black Obelisk", "The Old Man and the Sea",
-                        "The Sun Also Rises", "Animal Farm", "The Psychopathology of Everyday Life");
+                .containsOnly("The Night in Lisbon", "The Black Obelisk", "The Old Man and the Sea", "The Sun Also Rises",
+                        "Animal Farm", "The Psychopathology of Everyday Life", "The Authorless Book");
         assertThat(all).extracting("year")
-                .containsOnly(1964, 1957, 1951, 1927, 1945, 1904);
-        assertThat(all).extracting("author.id")
-                .containsOnly(1, 1, 2, 2, 3, 4);
-        assertThat(all).extracting("author.name")
+                .containsOnly(1964, 1957, 1951, 1927, 1945, 1904, 1974);
+        assertThat(all).flatExtracting("authors").isNotEmpty();
+        assertThat(all).flatExtracting("authors").extracting("name")
                 .containsOnly("Erich Maria Remarque", "Erich Maria Remarque", "Ernest Hemingway",
                         "Ernest Hemingway", "George Orwell", "Sigmund Freud");
+        assertThat(all).flatExtracting("authors").extracting("id")
+                .containsOnly(1, 1, 2, 2, 3, 4);
+        assertThat(all).flatExtracting("comments").extracting("id")
+                .containsOnly(1, 2, 3, 4, 5, 6, 7);
+        assertThat(all).flatExtracting("comments").extracting("value")
+                .containsOnly("Interesting book. Hope everybody will enjoy it!",
+                        "The greatest I ever read!",
+                        "The good one. I have advised it to my father",
+                        "Good book!",
+                        "I dont really like it, coudnt even finish it...",
+                        "I love this book. I have re-read it 3 times already!",
+                        "It is difficult one but worth to read it!");
         assertThat(all).extracting("genre.id")
                 .containsOnly(6, 6, 6, 6, 5, 4);
         assertThat(all).extracting("genre.name")
@@ -123,24 +118,28 @@ public class BookRepositoryTest extends AbstractDataJpaTest<Book> {
         assertThat(book).isPresent();
         assertThat(book).get().extracting("id").isEqualTo(2);
         assertThat(book).get().extracting("name").isEqualTo("The Black Obelisk");
-        assertThat(book).get().extracting("author.name").isEqualTo("Erich Maria Remarque");
-        assertThat(book).get().extracting("author.id").isEqualTo(1);
         assertThat(book).get().extracting("genre.name").isEqualTo("Fiction");
         assertThat(book).get().extracting("genre.id").isEqualTo(6);
+        assertThat(book.get().getAuthors()).isNotEmpty();
+        assertThat(book.get().getAuthors()).extracting("name").containsOnly("Erich Maria Remarque");
+        assertThat(book.get().getAuthors()).extracting("id").containsOnly(1);
+        assertThat(book.get().getComments()).isNotEmpty();
+        assertThat(book.get().getComments()).extracting("id").containsOnly(3);
+        assertThat(book.get().getComments()).extracting("value").containsOnly("Good book!");
     }
 
     @Test
     @DisplayName("Update absent book")
     public void updateAbsentTest() {
-        repository.update(12, Book.builder()
+        final var optional = repository.update(12, Book.builder()
                 .name("The Black Swan")
                 .year(1967)
                 .authors(newHashSet(Author.builder().id(5).build()))
                 .genre(Genre.builder().id(2).build())
                 .build());
-
-        final Optional<Book> optional = repository.findById(12);
         assertThat(optional).isNotPresent();
+        final var all = findAll();
+        assertThat(all).extracting("name").doesNotContain("Nikolai Michailowitsch Karamsin");
     }
 
     @Test
@@ -149,19 +148,22 @@ public class BookRepositoryTest extends AbstractDataJpaTest<Book> {
         repository.update(4, Book.builder()
                 .name("The Black Swan")
                 .year(1967)
-                .authors(newHashSet(Author.builder().id(5).build()))
+                .authors(newHashSet(Author.builder().id(1).build(), Author.builder().id(2).build()))
                 .genre(Genre.builder().id(2).build())
                 .build());
 
-        final Optional<Book> book = repository.findById(4);
+        final Book book = findOne(4);
         assertThat(book).isNotNull();
-        assertThat(book).get().extracting("id").isEqualTo(4);
-        assertThat(book).get().extracting("year").isEqualTo(1967);
-        assertThat(book).get().extracting("name").isEqualTo("The Black Swan");
-        assertThat(book).get().extracting("author.name").isEqualTo("Fedor Dostoevsky");
-        assertThat(book).get().extracting("author.id").isEqualTo(5);
-        assertThat(book).get().extracting("genre.name").isEqualTo("History");
-        assertThat(book).get().extracting("genre.id").isEqualTo(2);
+        assertThat(book).extracting("id").isEqualTo(4);
+        assertThat(book).extracting("year").isEqualTo(1967);
+        assertThat(book).extracting("name").isEqualTo("The Black Swan");
+        assertThat(book.getAuthors()).isNotEmpty();
+        assertThat(book.getAuthors()).extracting("name")
+                .containsOnly("Erich Maria Remarque", "Ernest Hemingway");
+        assertThat(book.getAuthors()).extracting("id")
+                .containsOnly(1, 2);
+        assertThat(book).extracting("genre.name").isEqualTo("History");
+        assertThat(book).extracting("genre.id").isEqualTo(2);
     }
 
     @Test
