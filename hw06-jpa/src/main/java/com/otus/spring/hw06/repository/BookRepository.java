@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookRepository {
-    int create(Book book);
-
-    int deleteById(int id);
+    void deleteById(int id);
 
     List<Book> findAll();
 
     Optional<Book> findById(int id);
 
-    int update(int id, Book book);
+    Book save(Book book);
+
+    Book update(int id, Book book);
 }

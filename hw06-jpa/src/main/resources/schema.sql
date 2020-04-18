@@ -2,6 +2,7 @@ drop table if exists genres cascade;
 drop table if exists books cascade;
 drop table if exists authors cascade;
 drop table if exists comments cascade;
+drop table if exists books_authors cascade;
 
 create table genres
 (

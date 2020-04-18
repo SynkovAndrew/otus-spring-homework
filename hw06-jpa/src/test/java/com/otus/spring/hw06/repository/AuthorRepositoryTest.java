@@ -15,11 +15,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @Import(AuthorRepositoryJpa.class)
-public class AuthorRepositoryTest {
+public class AuthorRepositoryTest extends AbstractDataJpaTest<Author> {
+    private final AuthorRepository repository;
+
     @Autowired
-    private TestEntityManager entityManager;
-    @Autowired
-    private AuthorRepository repository;
+    protected AuthorRepositoryTest(TestEntityManager entityManager,
+                                   AuthorRepository repository) {
+        super(Author.class, entityManager);
+        this.repository = repository;
+    }
 
     @Test
     @DisplayName("Delete absent author")
@@ -28,6 +32,9 @@ public class AuthorRepositoryTest {
 
         final List<Author> all = findAll();
         assertThat(all).size().isEqualTo(4);
+        assertThat(all).extracting(Author::getId).containsOnly(1, 2, 3, 4);
+        assertThat(all).extracting(Author::getName)
+                .containsOnly("Erich Maria Remarque", "Ernest Hemingway", "George Orwell", "Sigmund Freud");
     }
 
     @Test
@@ -45,14 +52,8 @@ public class AuthorRepositoryTest {
     @Test
     @DisplayName("Find absent author by id")
     public void findAbsentByIdTest() {
-        final Optional<Author> optional = repository.findById(11);
-        assertThat(optional).isNotPresent();
-    }
-
-    private List<Author> findAll() {
-        return entityManager.getEntityManager()
-                .createQuery("select a from Author a ", Author.class)
-                .getResultList();
+        final Author author = findOne(11);
+        assertThat(author).isNull();
     }
 
     @Test
@@ -68,10 +69,10 @@ public class AuthorRepositoryTest {
     @Test
     @DisplayName("Find author by id")
     public void findByIdTest() {
-        final Optional<Author> author = repository.findById(3);
-        assertThat(author).get().isNotNull();
-        assertThat(author).get().extracting(Author::getId).isEqualTo(3);
-        assertThat(author).get().extracting(Author::getName).isEqualTo("George Orwell");
+        final Author author = findOne(3);
+        assertThat(author).isNotNull();
+        assertThat(author).extracting(Author::getId).isEqualTo(3);
+        assertThat(author).extracting(Author::getName).isEqualTo("George Orwell");
     }
 
     @Test
@@ -92,8 +93,8 @@ public class AuthorRepositoryTest {
     public void updateAbsentTest() {
         repository.update(11, Author.builder().name("Nikolai Michailowitsch Karamsin").build());
 
-        final Optional<Author> optional = repository.findById(11);
-        assertThat(optional).isNotPresent();
+        final Author author = findOne(11);
+        assertThat(author).isNull();
     }
 
     @Test
@@ -101,9 +102,9 @@ public class AuthorRepositoryTest {
     public void updateTest() {
         repository.update(1, Author.builder().name("Nikolai Michailowitsch Karamsin").build());
 
-        final Optional<Author> author = repository.findById(1);
-        assertThat(author).isPresent();
-        assertThat(author).get().extracting(Author::getId).isEqualTo(1);
-        assertThat(author).get().extracting(Author::getName).isEqualTo("Nikolai Michailowitsch Karamsin");
+        final Author author = findOne(1);
+        assertThat(author).isNotNull();
+        assertThat(author).extracting(Author::getId).isEqualTo(1);
+        assertThat(author).extracting(Author::getName).isEqualTo("Nikolai Michailowitsch Karamsin");
     }
 }

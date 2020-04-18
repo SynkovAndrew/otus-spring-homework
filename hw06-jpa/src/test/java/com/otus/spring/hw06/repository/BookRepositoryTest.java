@@ -6,37 +6,40 @@ import com.otus.spring.hw06.domain.Genre;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
 import java.util.List;
+import java.util.Optional;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@JdbcTest
+@DataJpaTest
 @Import(BookRepositoryJpa.class)
-public class BookRepositoryTest {
+public class BookRepositoryTest extends AbstractDataJpaTest<Book> {
+    private final BookRepository repository;
+
     @Autowired
-    private TestEntityManager entityManager;
-    @Autowired
-    private BookRepository repository;
+    protected BookRepositoryTest(TestEntityManager entityManager,
+                                 BookRepository repository) {
+        super(Book.class, entityManager);
+        this.repository = repository;
+    }
 
     @Test
     @DisplayName("Create new book")
     public void createTest() {
         final Book book = Book.builder()
                 .name("Nineteen Eighty-Four")
-                .authors(newHashSet(
-                        Author.builder().id(3).build()
-                ))
+                .authors(newHashSet(Author.builder().id(3).build()))
                 .genre(Genre.builder().id(5).build())
                 .year(1949)
                 .build();
 
-        repository.(book);
+        repository.save(book);
 
         final List<Book> all = findAll();
         assertThat(all).size().isEqualTo(7);
@@ -49,31 +52,33 @@ public class BookRepositoryTest {
     public void createWithAbsentAuthorTest() {
         final Book book = Book.builder()
                 .name("Nineteen Eighty-Four")
-                .author(Author.builder().id(134).build())
+                .authors(newHashSet(Author.builder().id(134).build()))
                 .genre(Genre.builder().id(5).build())
                 .year(1949)
                 .build();
+        repository.save(book);
 
-        assertThrows(ReferencedObjectNotFoundException.class, () -> bookDao.create(book));
+        final List<Book> all = findAll();
+        assertThat(all).size().isEqualTo(7);
+        assertThat(all).extracting("id").isNotNull();
+        assertThat(all).extracting("name").containsOnlyOnce("Nineteen Eighty-Four");
     }
 
     @Test
     @DisplayName("Delete absent book")
     public void deleteAbsentTest() {
-        final int result = bookDao.deleteById(123);
-        assertThat(result).isEqualTo(0);
+        repository.deleteById(123);
 
-        final List<Book> all = bookDao.findAll();
+        final List<Book> all = repository.findAll();
         assertThat(all).size().isEqualTo(6);
     }
 
     @Test
     @DisplayName("Delete book")
     public void deleteTest() {
-        final int result = bookDao.deleteById(4);
-        assertThat(result).isEqualTo(1);
+        repository.deleteById(4);
 
-        final List<Book> all = bookDao.findAll();
+        final List<Book> all = repository.findAll();
         assertThat(all).size().isEqualTo(5);
         assertThat(all).extracting("id").containsOnly(1, 2, 3, 5, 6);
         assertThat(all).extracting("name")
@@ -86,14 +91,13 @@ public class BookRepositoryTest {
     @Test
     @DisplayName("Find absent book by id")
     public void findAbsentByIdTest() {
-        final Optional<Book> optional = bookDao.findById(212);
-        assertThat(optional.isEmpty()).isTrue();
+        assertThat(repository.findById(212)).isNotPresent();
     }
 
     @Test
     @DisplayName("Find all books")
     public void findAllTest() {
-        final List<Book> all = bookDao.findAll(Options.builder().selectReferencedObjects(true).build());
+        final List<Book> all = repository.findAll();
         assertThat(all).size().isEqualTo(6);
         assertThat(all).extracting("id").containsOnly(1, 2, 3, 4, 5, 6);
         assertThat(all).extracting("name")
@@ -115,80 +119,60 @@ public class BookRepositoryTest {
     @Test
     @DisplayName("Find book by id")
     public void findByIdTest() {
-        final Book book = bookDao.findById(2, Options.builder().selectReferencedObjects(true).build()).get();
-        assertThat(book).isNotNull();
-        assertThat(book).extracting("id").isEqualTo(2);
-        assertThat(book).extracting("name").isEqualTo("The Black Obelisk");
-        assertThat(book).extracting("author.name").isEqualTo("Erich Maria Remarque");
-        assertThat(book).extracting("author.id").isEqualTo(1);
-        assertThat(book).extracting("genre.name").isEqualTo("Fiction");
-        assertThat(book).extracting("genre.id").isEqualTo(6);
+        final Optional<Book> book = repository.findById(2);
+        assertThat(book).isPresent();
+        assertThat(book).get().extracting("id").isEqualTo(2);
+        assertThat(book).get().extracting("name").isEqualTo("The Black Obelisk");
+        assertThat(book).get().extracting("author.name").isEqualTo("Erich Maria Remarque");
+        assertThat(book).get().extracting("author.id").isEqualTo(1);
+        assertThat(book).get().extracting("genre.name").isEqualTo("Fiction");
+        assertThat(book).get().extracting("genre.id").isEqualTo(6);
     }
 
     @Test
     @DisplayName("Update absent book")
-    public void updateAbsentTest() throws ReferencedObjectNotFoundException {
-        final int result = bookDao.update(12, Book.builder()
+    public void updateAbsentTest() {
+        repository.update(12, Book.builder()
                 .name("The Black Swan")
                 .year(1967)
-                .author(Author.builder()
-                        .id(5)
-                        .build())
-                .genre(Genre.builder()
-                        .id(2)
-                        .build())
+                .authors(newHashSet(Author.builder().id(5).build()))
+                .genre(Genre.builder().id(2).build())
                 .build());
-        assertThat(result).isEqualTo(0);
 
-        final Optional<Book> optional = bookDao.findById(12);
-        assertThat(optional.isEmpty()).isTrue();
+        final Optional<Book> optional = repository.findById(12);
+        assertThat(optional).isNotPresent();
     }
 
     @Test
     @DisplayName("Update book")
-    public void updateTest() throws ReferencedObjectNotFoundException {
-        final int result = bookDao.update(4, Book.builder()
+    public void updateTest() {
+        repository.update(4, Book.builder()
                 .name("The Black Swan")
                 .year(1967)
-                .author(Author.builder()
-                        .id(5)
-                        .build())
-                .genre(Genre.builder()
-                        .id(2)
-                        .build())
+                .authors(newHashSet(Author.builder().id(5).build()))
+                .genre(Genre.builder().id(2).build())
                 .build());
-        assertThat(result).isEqualTo(1);
 
-        final Book book = bookDao.findById(4, Options.builder().selectReferencedObjects(true).build()).get();
+        final Optional<Book> book = repository.findById(4);
         assertThat(book).isNotNull();
-        assertThat(book).extracting("id").isEqualTo(4);
-        assertThat(book).extracting("year").isEqualTo(1967);
-        assertThat(book).extracting("name").isEqualTo("The Black Swan");
-        assertThat(book).extracting("author.name").isEqualTo("Fedor Dostoevsky");
-        assertThat(book).extracting("author.id").isEqualTo(5);
-        assertThat(book).extracting("genre.name").isEqualTo("History");
-        assertThat(book).extracting("genre.id").isEqualTo(2);
+        assertThat(book).get().extracting("id").isEqualTo(4);
+        assertThat(book).get().extracting("year").isEqualTo(1967);
+        assertThat(book).get().extracting("name").isEqualTo("The Black Swan");
+        assertThat(book).get().extracting("author.name").isEqualTo("Fedor Dostoevsky");
+        assertThat(book).get().extracting("author.id").isEqualTo(5);
+        assertThat(book).get().extracting("genre.name").isEqualTo("History");
+        assertThat(book).get().extracting("genre.id").isEqualTo(2);
     }
 
     @Test
     @DisplayName("Update book with absent author")
     public void updateWithAbsentAuthorTest() {
-        assertThrows(ReferencedObjectNotFoundException.class,
-                () -> bookDao.update(4, Book.builder()
+        assertThrows(Exception.class,
+                () -> repository.update(4, Book.builder()
                         .name("The Black Swan")
                         .year(1235)
-                        .author(Author.builder()
-                                .id(1)
-                                .build())
-                        .genre(Genre.builder()
-                                .id(154)
-                                .build())
+                        .authors(newHashSet(Author.builder().id(1).build()))
+                        .genre(Genre.builder().id(154).build())
                         .build()));
-    }
-
-    private List<Book> findAll() {
-        return entityManager.getEntityManager()
-                .createQuery("select b from Book b ", Book.class)
-                .getResultList();
     }
 }

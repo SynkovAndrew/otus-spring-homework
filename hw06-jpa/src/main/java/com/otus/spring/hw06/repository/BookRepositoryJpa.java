@@ -1,37 +1,59 @@
 package com.otus.spring.hw06.repository;
 
 import com.otus.spring.hw06.domain.Book;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Optional.ofNullable;
+
 @Repository
 public class BookRepositoryJpa implements BookRepository {
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
-    public int create(Book book) {
-        return 0;
+    @Transactional
+    public void deleteById(final int id) {
+        final Query query = entityManager.createQuery("delete from Book b where b.id = :id");
+        query.setParameter("id", id);
+        query.executeUpdate();
     }
 
     @Override
-    public int deleteById(int id) {
-        return 0;
-    }
-
-    @Override
+    @Transactional(readOnly = true)
     public List<Book> findAll() {
-        return null;
+        final TypedQuery<Book> query = entityManager.createQuery("select b from Book b ", Book.class);
+        return query.getResultList();
     }
 
     @Override
-    public Optional<Book> findById(int id) {
-        return Optional.empty();
+    @Transactional(readOnly = true)
+    public Optional<Book> findById(final int id) {
+        return ofNullable(entityManager.find(Book.class, id));
     }
 
     @Override
-    public int update(int id, Book book) {
-        return 0;
+    @Transactional
+    public Book save(final Book book) {
+        return ofNullable(book.getId())
+                .map(id -> entityManager.merge(book))
+                .orElseGet(() -> {
+                    entityManager.persist(book);
+                    return book;
+                });
+    }
+
+    @Override
+    @Transactional
+    public Book update(final int id, final Book book) {
+        book.setId(id);
+        return save(book);
     }
 }
