@@ -5,9 +5,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import java.util.List;
 
 public abstract class AbstractDataJpaTest<T> {
+    protected final TestEntityManager entityManager;
     private final String className;
     private final Class<T> clazz;
-    private final TestEntityManager entityManager;
 
     protected AbstractDataJpaTest(final Class<T> clazz, final TestEntityManager entityManager) {
         this.clazz = clazz;

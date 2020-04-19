@@ -22,6 +22,9 @@ public class AuthorRepositoryJpa implements AuthorRepository {
     @Transactional
     public Optional<Author> deleteById(final int id) {
         return findById(id).map(author -> {
+            entityManager.createNativeQuery("delete from books_authors where author_id = :author_id")
+                    .setParameter("author_id", id)
+                    .executeUpdate();
             entityManager.remove(author);
             return author;
         });

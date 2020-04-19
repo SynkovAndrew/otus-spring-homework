@@ -12,13 +12,15 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
-import static com.google.common.collect.Sets.newHashSet;
+import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toSet;
 
 
 @Slf4j
 @ShellComponent
 @RequiredArgsConstructor
-public class ShellUI {
+public class ShellConsoleUI extends ConsoleUI {
     private final AuthorRepository authorRepository;
     private final BookRepository bookRepository;
     private final GenreRepository genreRepository;
@@ -26,21 +28,21 @@ public class ShellUI {
     @ShellMethod(key = {"create book", "cb"}, value = "create new book")
     public void createBook(final @ShellOption("name") String name,
                            final @ShellOption("year") int year,
-                           final @ShellOption("authorId") int authorId,
+                           final @ShellOption("authorIds") int[] authorIds,
                            final @ShellOption("genreId") int genreId) {
-        bookRepository.save(Book.builder()
+        final var book = Book.builder()
                 .year(year)
                 .name(name)
-                .authors(newHashSet(Author.builder().id(authorId).build()))
+                .authors(IntStream.of(authorIds)
+                        .mapToObj(authorId -> Author.builder().id(authorId).build())
+                        .collect(toSet()))
                 .genre(Genre.builder().id(genreId).build())
-                .build());
-        show(() -> System.out.print("Book has been created!"));
-
-/*        try {
-
-        } catch (ReferencedObjectNotFoundException e) {
-            show(() -> System.out.print("Failed to create book! Referenced author or genre hasn't been found!"));
-        }*/
+                .build();
+        bookRepository.save(book)
+                .ifPresentOrElse(
+                        created -> show(() -> System.out.print("Book has been created!")),
+                        () -> show(() -> System.out.print("Failed to create book! Referenced entity hasn't been found!"))
+                );
     }
 
     @ShellMethod(key = {"remove book", "rmb"}, value = "remove a book")
@@ -50,12 +52,6 @@ public class ShellUI {
                         book -> show(() -> System.out.printf("Book \"%d\" has been removed!", book.getId())),
                         () -> show(() -> System.out.printf("Book \"%d\" hasn't been found!", id))
                 );
-    }
-
-    private void show(final Runnable runnable) {
-        System.out.println();
-        runnable.run();
-        System.out.println();
     }
 
     @ShellMethod(key = {"show authors", "sas"}, value = "show all authors")
@@ -85,19 +81,20 @@ public class ShellUI {
     public void updateBook(final @ShellOption("id") int id,
                            final @ShellOption("name") String name,
                            final @ShellOption("year") int year,
-                           final @ShellOption("authorId") int authorId,
+                           final @ShellOption("authorIds") int[] authorIds,
                            final @ShellOption("genreId") int genreId) {
-        bookRepository.update(id, Book.builder()
+        final var book = Book.builder()
                 .year(year)
                 .name(name)
-                .authors(newHashSet(Author.builder().id(authorId).build()))
+                .authors(IntStream.of(authorIds)
+                        .mapToObj(authorId -> Author.builder().id(authorId).build())
+                        .collect(toSet()))
                 .genre(Genre.builder().id(genreId).build())
-                .build());
-        show(() -> System.out.printf("Book \"%d\" has been updated!", id));
-/*        try {
-
-        } catch (ReferencedObjectNotFoundException e) {
-            show(() -> System.out.print("Failed to update book! Referenced author or genre hasn't been found!"));
-        }*/
+                .build();
+        bookRepository.update(id, book)
+                .ifPresentOrElse(
+                        updated -> show(() -> System.out.printf("Book \"%d\" has been updated!", updated.getId())),
+                        () -> show(() -> System.out.print("Failed to update book! Referenced entity hasn't been found!"))
+                );
     }
 }

@@ -13,7 +13,7 @@ public interface BookRepository {
 
     Optional<Book> findById(int id);
 
-    Book save(Book book);
+    Optional<Book> save(Book book);
 
     Optional<Book> update(int id, Book book);
 }

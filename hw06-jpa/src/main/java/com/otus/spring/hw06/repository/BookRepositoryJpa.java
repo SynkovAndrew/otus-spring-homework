@@ -5,12 +5,14 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Optional.ofNullable;
+import static java.util.Objects.nonNull;
+import static java.util.Optional.*;
 
 @Repository
 public class BookRepositoryJpa implements BookRepository {
@@ -44,20 +46,24 @@ public class BookRepositoryJpa implements BookRepository {
 
     @Override
     @Transactional
-    public Book save(final Book book) {
-        return ofNullable(book.getId())
-                .map(id -> entityManager.merge(book))
-                .orElseGet(() -> {
-                    entityManager.persist(book);
-                    return book;
-                });
+    public Optional<Book> save(final Book book) {
+        try {
+            if (nonNull(book.getId())) {
+                entityManager.merge(book);
+                return of(book);
+            }
+            entityManager.persist(book);
+            return of(book);
+        } catch (EntityNotFoundException e) {
+            return empty();
+        }
     }
 
     @Override
     @Transactional
     public Optional<Book> update(final int id, final Book book) {
         return findById(id)
-                .map(obj -> {
+                .flatMap(obj -> {
                     book.setId(id);
                     return save(book);
                 });
