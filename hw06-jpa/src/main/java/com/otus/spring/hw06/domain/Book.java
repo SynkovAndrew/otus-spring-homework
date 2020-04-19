@@ -25,7 +25,7 @@ public class Book {
     private Set<Author> authors = new HashSet<>();
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "book_id", nullable = false)
-    private Set<Comment> comments;
+    private Set<Comment> comments = new HashSet<>();
     @ManyToOne
     @JoinColumn(name = "genre_id", nullable = false)
     private Genre genre;

@@ -20,12 +20,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 @Import(BookRepositoryJpa.class)
-public class BookRepositoryTest extends AbstractDataJpaTest<Book> {
+public class BookRepositoryJpaTest extends AbstractDataJpaTest<Book> {
     private final BookRepository repository;
 
     @Autowired
-    protected BookRepositoryTest(TestEntityManager entityManager,
-                                 BookRepository repository) {
+    protected BookRepositoryJpaTest(TestEntityManager entityManager,
+                                    BookRepository repository) {
         super(Book.class, entityManager);
         this.repository = repository;
     }
@@ -51,8 +51,8 @@ public class BookRepositoryTest extends AbstractDataJpaTest<Book> {
     @Test
     @DisplayName("Delete absent book")
     public void deleteAbsentTest() {
-        repository.deleteById(123);
-
+        final var book = repository.deleteById(123);
+        assertThat(book).isNotPresent();
         final List<Book> all = repository.findAll();
         assertThat(all).size().isEqualTo(7);
     }
@@ -60,7 +60,8 @@ public class BookRepositoryTest extends AbstractDataJpaTest<Book> {
     @Test
     @DisplayName("Delete book")
     public void deleteTest() {
-        repository.deleteById(4);
+        final var book = repository.deleteById(4);
+        assertThat(book).isPresent();
 
         final List<Book> all = repository.findAll();
         assertThat(all).size().isEqualTo(6);
@@ -149,6 +150,29 @@ public class BookRepositoryTest extends AbstractDataJpaTest<Book> {
                 .name("The Black Swan")
                 .year(1967)
                 .authors(newHashSet(Author.builder().id(1).build(), Author.builder().id(2).build()))
+                .genre(Genre.builder().id(2).build())
+                .build());
+        final Book book = findOne(4);
+        assertThat(book).isNotNull();
+        assertThat(book).extracting("id").isEqualTo(4);
+        assertThat(book).extracting("year").isEqualTo(1967);
+        assertThat(book).extracting("name").isEqualTo("The Black Swan");
+        assertThat(book.getAuthors()).isNotEmpty();
+        assertThat(book.getAuthors()).extracting("name")
+                .containsOnly("Erich Maria Remarque", "Ernest Hemingway");
+        assertThat(book.getAuthors()).extracting("id")
+                .containsOnly(1, 2);
+        assertThat(book).extracting("genre.name").isEqualTo("History");
+        assertThat(book).extracting("genre.id").isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("Update book with absent reference")
+    public void updateTest_absentAuthor() {
+        repository.update(4, Book.builder()
+                .name("The Black Swan")
+                .year(1967)
+                .authors(newHashSet(Author.builder().id(1).build(), Author.builder().id(111).build()))
                 .genre(Genre.builder().id(2).build())
                 .build());
         final Book book = findOne(4);

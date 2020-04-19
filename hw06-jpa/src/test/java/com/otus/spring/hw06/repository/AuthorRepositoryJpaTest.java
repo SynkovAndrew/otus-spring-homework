@@ -16,12 +16,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @Import(AuthorRepositoryJpa.class)
-public class AuthorRepositoryTest extends AbstractDataJpaTest<Author> {
+public class AuthorRepositoryJpaTest extends AbstractDataJpaTest<Author> {
     private final AuthorRepository repository;
 
     @Autowired
-    protected AuthorRepositoryTest(TestEntityManager entityManager,
-                                   AuthorRepository repository) {
+    protected AuthorRepositoryJpaTest(TestEntityManager entityManager,
+                                      AuthorRepository repository) {
         super(Author.class, entityManager);
         this.repository = repository;
     }
@@ -29,7 +29,8 @@ public class AuthorRepositoryTest extends AbstractDataJpaTest<Author> {
     @Test
     @DisplayName("Delete absent author")
     public void deleteAbsentTest() {
-        repository.deleteById(12);
+        final var author = repository.deleteById(12);
+        assertThat(author).isNotPresent();
         final List<Author> all = findAll();
         assertThat(all).size().isEqualTo(4);
         assertThat(all).extracting(Author::getId).containsOnly(1, 2, 3, 4);
@@ -40,7 +41,8 @@ public class AuthorRepositoryTest extends AbstractDataJpaTest<Author> {
     @Test
     @DisplayName("Delete author")
     public void deleteTest() {
-        repository.deleteById(4);
+        final var author = repository.deleteById(4);
+        assertThat(author).isPresent();
         final List<Author> all = findAll();
         assertThat(all).size().isEqualTo(3);
         assertThat(all).extracting(Author::getId).containsOnly(1, 2, 3);

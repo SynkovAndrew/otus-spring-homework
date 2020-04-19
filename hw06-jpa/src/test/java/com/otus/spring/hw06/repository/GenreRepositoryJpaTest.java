@@ -15,12 +15,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @Import(GenreRepositoryJpa.class)
-public class GenreRepositoryTest extends AbstractDataJpaTest<Genre> {
+public class GenreRepositoryJpaTest extends AbstractDataJpaTest<Genre> {
     private final GenreRepository repository;
 
     @Autowired
-    protected GenreRepositoryTest(TestEntityManager entityManager,
-                                  GenreRepository repository) {
+    protected GenreRepositoryJpaTest(TestEntityManager entityManager,
+                                     GenreRepository repository) {
         super(Genre.class, entityManager);
         this.repository = repository;
     }
@@ -40,7 +40,8 @@ public class GenreRepositoryTest extends AbstractDataJpaTest<Genre> {
     @Test
     @DisplayName("Delete absent genre")
     public void deleteAbsentTest() {
-        repository.deleteById(156);
+        final var genre = repository.deleteById(156);
+        assertThat(genre).isNotPresent();
 
         final List<Genre> all = findAll();
         assertThat(all).size().isEqualTo(6);
@@ -49,7 +50,8 @@ public class GenreRepositoryTest extends AbstractDataJpaTest<Genre> {
     @Test
     @DisplayName("Delete genre")
     public void deleteTest() {
-        repository.deleteById(1);
+        final var genre = repository.deleteById(1);
+        assertThat(genre).isPresent();
 
         final List<Genre> all = findAll();
         assertThat(all).size().isEqualTo(5);

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookRepository {
-    void deleteById(int id);
+    Optional<Book> deleteById(int id);
 
     List<Book> findAll();
 

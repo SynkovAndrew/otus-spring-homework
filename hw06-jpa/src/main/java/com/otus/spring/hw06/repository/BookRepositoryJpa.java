@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
@@ -20,13 +19,14 @@ public class BookRepositoryJpa implements BookRepository {
 
     @Override
     @Transactional
-    public void deleteById(final int id) {
-        entityManager.createNativeQuery("delete from books_authors where book_id = :book_id")
-                .setParameter("book_id", id)
-                .executeUpdate();
-        entityManager.createQuery("delete from Book b where b.id = :id")
-                .setParameter("id", id)
-                .executeUpdate();
+    public Optional<Book> deleteById(final int id) {
+        return findById(id).map(book -> {
+            entityManager.createNativeQuery("delete from books_authors where book_id = :book_id")
+                    .setParameter("book_id", id)
+                    .executeUpdate();
+            entityManager.remove(book);
+            return book;
+        });
     }
 
     @Override

@@ -20,10 +20,11 @@ public class GenreRepositoryJpa implements GenreRepository {
 
     @Override
     @Transactional
-    public void deleteById(final int id) {
-        final Query query = entityManager.createQuery("delete from Genre g where g.id = :id");
-        query.setParameter("id", id);
-        query.executeUpdate();
+    public Optional<Genre> deleteById(final int id) {
+        return findById(id).map(genre -> {
+            entityManager.remove(genre);
+            return genre;
+        });
     }
 
     @Override
