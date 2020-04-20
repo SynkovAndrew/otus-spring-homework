@@ -164,30 +164,4 @@ public class BookRepositoryJpaTest extends AbstractDataJpaTest<Book> {
         assertThat(book).extracting("genre.name").isEqualTo("History");
         assertThat(book).extracting("genre.id").isEqualTo(2);
     }
-
-    @Test
-    @DisplayName("Update book with absent reference")
-    public void updateTest_absentAuthor() {
-        final var optional = repository.update(4, Book.builder()
-                .name("The Black Swan")
-                .year(1967)
-                .authors(newHashSet(Author.builder().id(111).build()))
-                .genre(Genre.builder().id(2).build())
-                .build());
-        assertThat(optional).isNotPresent();
-        entityManager.getEntityManager().getTransaction().rollback();
-
-        final Book book = findOne(4);
-        assertThat(book).isNotNull();
-        assertThat(book).extracting("id").isEqualTo(4);
-        assertThat(book).extracting("year").isEqualTo(1927);
-        assertThat(book).extracting("name").isEqualTo("The Sun Also Rises");
-        assertThat(book.getAuthors()).isNotEmpty();
-        assertThat(book.getAuthors()).extracting("name")
-                .containsOnly("Ernest Hemingway");
-        assertThat(book.getAuthors()).extracting("id")
-                .containsOnly(2);
-        assertThat(book).extracting("genre.name").isEqualTo("Fiction");
-        assertThat(book).extracting("genre.id").isEqualTo(6);
-    }
 }

@@ -10,5 +10,5 @@ public interface CommentRepository {
 
     Optional<Comment> find(int commentId);
 
-    void remove(int commentId);
+    Optional<Comment> remove(int commentId);
 }

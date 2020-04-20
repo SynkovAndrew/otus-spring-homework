@@ -37,9 +37,10 @@ public class CommentRepositoryJpa implements CommentRepository {
 
     @Override
     @Transactional
-    public void remove(final int id) {
-        entityManager.createQuery("delete from Comment c where c.id = :id")
-                .setParameter("id", id)
-                .executeUpdate();
+    public Optional<Comment> remove(final int id) {
+        return find(id).map(comment -> {
+            entityManager.remove(comment);
+            return comment;
+        });
     }
 }

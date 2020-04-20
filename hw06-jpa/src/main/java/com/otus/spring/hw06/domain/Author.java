@@ -16,8 +16,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Author {
-/*    @ManyToMany(mappedBy = "authors")
-    private Set<Book> books = new HashSet<>();*/
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
