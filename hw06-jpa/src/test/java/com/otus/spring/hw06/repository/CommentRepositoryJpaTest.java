@@ -9,8 +9,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
+import java.util.Set;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 @Import(CommentRepositoryJpa.class)
@@ -22,6 +23,16 @@ public class CommentRepositoryJpaTest extends AbstractDataJpaTest<Book> {
                                        final CommentRepository commentRepository) {
         super(Book.class, entityManager);
         this.commentRepository = commentRepository;
+    }
+
+    @Test
+    @DisplayName("Find all comments for certain book")
+    public void findCommentsByBookId() {
+        final var comments = commentRepository.findAllByBookId(3);
+        assertThat(comments).isNotNull();
+        assertThat(comments).hasSize(2);
+        assertThat(comments).extracting(Comment::getValue).containsOnly(
+                "The good one. I have advised it to my father", "I dont really like it, coudnt even finish it...");
     }
 
     @Test
@@ -65,7 +76,7 @@ public class CommentRepositoryJpaTest extends AbstractDataJpaTest<Book> {
     @Test
     @DisplayName("Remove comment")
     public void removeCommentTest() {
-        commentRepository.remove(1);
+        commentRepository.remove(1, 1);
 
         final var book = findOne(1);
         assertThat(book).isNotNull();

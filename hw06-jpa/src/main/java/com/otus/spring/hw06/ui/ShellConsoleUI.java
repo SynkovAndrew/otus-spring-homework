@@ -40,13 +40,6 @@ public class ShellConsoleUI extends ConsoleUI {
                 );
     }
 
-    @ShellMethod(key = {"remove comment", "rc"}, value = "add comment to book")
-    public void addComment(final @ShellOption("commentId") int commentId) {
-        commentRepository.remove(commentId);
-        show(() -> System.out.println("Comment has been removed"));
-    }
-
-
     @ShellMethod(key = {"create book", "cb"}, value = "create new book")
     public void createBook(final @ShellOption("name") String name,
                            final @ShellOption("year") int year,
@@ -64,6 +57,11 @@ public class ShellConsoleUI extends ConsoleUI {
         show(() -> System.out.print("Book has been created!"));
     }
 
+    @ShellMethod(key = {"find book comments", "fbc"}, value = "Find all comments for certain book")
+    public void findBookComments(final @ShellOption("bookId") int bookId) {
+        show(() -> commentRepository.findAllByBookId(bookId).forEach(System.out::println));
+    }
+
     @ShellMethod(key = {"remove book", "rmb"}, value = "remove a book")
     public void removeBook(final @ShellOption("id") int id) {
         bookRepository.deleteById(id)
@@ -71,6 +69,13 @@ public class ShellConsoleUI extends ConsoleUI {
                         book -> show(() -> System.out.printf("Book \"%d\" has been removed!", book.getId())),
                         () -> show(() -> System.out.printf("Book \"%d\" hasn't been found!", id))
                 );
+    }
+
+    @ShellMethod(key = {"remove comment", "rc"}, value = "add comment to book")
+    public void removeComment(final @ShellOption("bookId") int bookId,
+                              final @ShellOption("commentId") int commentId) {
+        commentRepository.remove(bookId, commentId);
+        show(() -> System.out.println("Comment has been removed"));
     }
 
     @ShellMethod(key = {"show authors", "sas"}, value = "show all authors")

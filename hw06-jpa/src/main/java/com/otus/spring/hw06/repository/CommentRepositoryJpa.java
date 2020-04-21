@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.util.Optional.*;
 
@@ -36,9 +38,19 @@ public class CommentRepositoryJpa implements CommentRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Set<Comment> findAllByBookId(final int bookId) {
+        return ofNullable(entityManager.find(Book.class, bookId))
+                .map(Book::getComments)
+                .orElse(Collections.emptySet());
+    }
+
+    @Override
     @Transactional
-    public Optional<Comment> remove(final int id) {
-        return find(id).map(comment -> {
+    public Optional<Comment> remove(final int bookId, final int commentId) {
+        return find(commentId).map(comment -> {
+            final var book = entityManager.find(Book.class, bookId);
+            book.getComments().remove(comment);
             entityManager.remove(comment);
             return comment;
         });
