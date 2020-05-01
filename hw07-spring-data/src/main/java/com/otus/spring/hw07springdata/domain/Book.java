@@ -23,10 +23,12 @@ public class Book {
             joinColumns = @JoinColumn(name = "book_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "author_id", referencedColumnName = "id")
     )
+    @Builder.Default
     private Set<Author> authors = new HashSet<>();
     @Fetch(FetchMode.SUBSELECT)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", nullable = false)
+    @Builder.Default
     private Set<Comment> comments = new HashSet<>();
     @ManyToOne
     @JoinColumn(name = "genre_id", nullable = false)
