@@ -1,4 +1,4 @@
-package com.otus.spring.hw07springdata.dto;
+package com.otus.spring.hw07springdata.dto.comment;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

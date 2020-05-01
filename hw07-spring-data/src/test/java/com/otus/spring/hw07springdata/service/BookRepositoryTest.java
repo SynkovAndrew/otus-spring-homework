@@ -1,13 +1,13 @@
 package com.otus.spring.hw07springdata.service;
 
-import com.otus.spring.hw07springdata.dto.AuthorDTO;
-import com.otus.spring.hw07springdata.dto.BookDTO;
-import com.otus.spring.hw07springdata.dto.GenreDTO;
+import com.otus.spring.hw07springdata.dto.book.BookDTO;
+import com.otus.spring.hw07springdata.dto.book.CreateOrUpdateBookRequestDTO;
+import com.otus.spring.hw07springdata.repository.AuthorRepository;
 import com.otus.spring.hw07springdata.repository.BookRepository;
+import com.otus.spring.hw07springdata.repository.GenreRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -16,20 +16,25 @@ import java.util.Optional;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mapstruct.factory.Mappers.getMapper;
 
 @DataJpaTest
 public class BookRepositoryTest {
     @Autowired
-    private BookRepository repository;
+    private AuthorRepository authorRepository;
+    @Autowired
+    private BookRepository bookRepository;
+    @Autowired
+    private GenreRepository genreRepository;
     private BookService service;
 
     @Test
     @DisplayName("Create new book")
     public void createTest() {
-        final BookDTO book = BookDTO.builder()
+        final var book = CreateOrUpdateBookRequestDTO.builder()
                 .name("Nineteen Eighty-Four")
-                .authors(newHashSet(AuthorDTO.builder().id(3).build()))
-                .genre(GenreDTO.builder().id(5).build())
+                .authorIds(newHashSet(3))
+                .genreId(5)
                 .year(1949)
                 .build();
         final var result = service.createOrUpdate(book);
@@ -58,7 +63,7 @@ public class BookRepositoryTest {
     @Test
     @DisplayName("Find absent book by id")
     public void findAbsentByIdTest() {
-        assertThat(repository.findById(212)).isNotPresent();
+        assertThat(service.findOne(212)).isNotPresent();
     }
 
     @Test
@@ -113,18 +118,18 @@ public class BookRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        service = new BookService(repository, Mappers.getMapper(MappingService.class));
+        service = new BookService(authorRepository, bookRepository, genreRepository, getMapper(MappingService.class));
     }
 
     @Test
     @DisplayName("Update book")
     public void updateTest() {
-        final var result = service.createOrUpdate(BookDTO.builder()
+        final var result = service.createOrUpdate(CreateOrUpdateBookRequestDTO.builder()
                 .name("The Black Swan")
                 .id(4)
                 .year(1967)
-                .authors(newHashSet(AuthorDTO.builder().id(1).build(), AuthorDTO.builder().id(2).build()))
-                .genre(GenreDTO.builder().id(2).build())
+                .authorIds(newHashSet(1, 2))
+                .genreId(2)
                 .build());
         assertThat(result).isPresent();
         final Optional<BookDTO> book = service.findOne(4);

@@ -1,6 +1,7 @@
 package com.otus.spring.hw07springdata.service;
 
-import com.otus.spring.hw07springdata.dto.GenreDTO;
+import com.otus.spring.hw07springdata.dto.genre.CreateOrUpdateGenreRequestDTO;
+import com.otus.spring.hw07springdata.dto.genre.GenreDTO;
 import com.otus.spring.hw07springdata.repository.GenreRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +24,7 @@ public class GenreServiceTest {
     @Test
     @DisplayName("Create new genre")
     public void createTest() {
-        final GenreDTO genre = GenreDTO.builder().name("Thriller").build();
+        final var genre = CreateOrUpdateGenreRequestDTO.builder().name("Thriller").build();
         final var saved = service.createOrUpdate(genre);
         assertThat(saved).isPresent();
         final List<GenreDTO> all = service.findAll();
@@ -66,7 +67,7 @@ public class GenreServiceTest {
     @DisplayName("Update absent genre")
     public void updateAbsentTest() {
         final var response = service.createOrUpdate(
-                GenreDTO.builder().name("Non Fiction").id(222).build());
+                CreateOrUpdateGenreRequestDTO.builder().name("Non Fiction").id(222).build());
         assertThat(response).isNotPresent();
         final List<GenreDTO> all = service.findAll();
         assertThat(all).size().isEqualTo(6);
@@ -76,7 +77,10 @@ public class GenreServiceTest {
     @Test
     @DisplayName("Update genre")
     public void updateTest() {
-        final var result = service.createOrUpdate(GenreDTO.builder().name("Non Fiction").id(2).build());
+        final var result = service.createOrUpdate(CreateOrUpdateGenreRequestDTO.builder()
+                .name("Non Fiction")
+                .id(2)
+                .build());
         assertThat(result).isPresent();
         final Optional<GenreDTO> genre = service.findOne(2);
         assertThat(genre).isPresent();

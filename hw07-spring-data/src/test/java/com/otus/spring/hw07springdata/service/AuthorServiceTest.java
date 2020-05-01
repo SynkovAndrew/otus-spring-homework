@@ -1,7 +1,8 @@
 package com.otus.spring.hw07springdata.service;
 
 
-import com.otus.spring.hw07springdata.dto.AuthorDTO;
+import com.otus.spring.hw07springdata.dto.author.AuthorDTO;
+import com.otus.spring.hw07springdata.dto.author.CreateOrUpdateAuthorRequestDTO;
 import com.otus.spring.hw07springdata.repository.AuthorRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -50,7 +51,7 @@ public class AuthorServiceTest {
     @Test
     @DisplayName("Save new author")
     public void saveTest() {
-        final AuthorDTO author = AuthorDTO.builder().name("Lev Tolstoy").build();
+        final var author = CreateOrUpdateAuthorRequestDTO.builder().name("Lev Tolstoy").build();
         final var response = service.createOrUpdate(author);
         assertThat(response).isPresent();
         final List<AuthorDTO> all = service.findAll();
@@ -68,7 +69,7 @@ public class AuthorServiceTest {
     @DisplayName("Update absent author")
     public void updateAbsentTest() {
         final var response = service.createOrUpdate(
-                AuthorDTO.builder().name("Nikolai Michailowitsch Karamsin").id(111).build());
+                CreateOrUpdateAuthorRequestDTO.builder().name("Nikolai Michailowitsch Karamsin").id(111).build());
         assertThat(response).isNotPresent();
         final List<AuthorDTO> all = service.findAll();
         assertThat(all).size().isEqualTo(4);
@@ -80,7 +81,7 @@ public class AuthorServiceTest {
     @DisplayName("Update author")
     public void updateTest() {
         final var response = service.createOrUpdate(
-                AuthorDTO.builder().name("Nikolai Michailowitsch Karamsin").id(1).build());
+                CreateOrUpdateAuthorRequestDTO.builder().name("Nikolai Michailowitsch Karamsin").id(1).build());
         assertThat(response).isPresent();
         final Optional<AuthorDTO> author = service.findOne(1);
         assertThat(author).isPresent();

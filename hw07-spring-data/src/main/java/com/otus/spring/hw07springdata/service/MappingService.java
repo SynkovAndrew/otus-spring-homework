@@ -4,10 +4,10 @@ import com.otus.spring.hw07springdata.domain.Author;
 import com.otus.spring.hw07springdata.domain.Book;
 import com.otus.spring.hw07springdata.domain.Comment;
 import com.otus.spring.hw07springdata.domain.Genre;
-import com.otus.spring.hw07springdata.dto.AuthorDTO;
-import com.otus.spring.hw07springdata.dto.BookDTO;
-import com.otus.spring.hw07springdata.dto.CommentDTO;
-import com.otus.spring.hw07springdata.dto.GenreDTO;
+import com.otus.spring.hw07springdata.dto.author.AuthorDTO;
+import com.otus.spring.hw07springdata.dto.book.BookDTO;
+import com.otus.spring.hw07springdata.dto.comment.CommentDTO;
+import com.otus.spring.hw07springdata.dto.genre.GenreDTO;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -36,6 +36,8 @@ public interface MappingService {
     List<BookDTO> mapBooksToDtos(List<Book> books);
 
     List<CommentDTO> mapCommentsToDtos(List<Comment> comments);
+
+    Set<CommentDTO> mapCommentsToDtos(Set<Comment> comments);
 
     List<Author> mapDtosToAuthors(List<AuthorDTO> authors);
 

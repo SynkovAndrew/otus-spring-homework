@@ -1,6 +1,9 @@
-package com.otus.spring.hw07springdata.dto;
+package com.otus.spring.hw07springdata.dto.book;
 
 
+import com.otus.spring.hw07springdata.dto.author.AuthorDTO;
+import com.otus.spring.hw07springdata.dto.comment.CommentDTO;
+import com.otus.spring.hw07springdata.dto.genre.GenreDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
