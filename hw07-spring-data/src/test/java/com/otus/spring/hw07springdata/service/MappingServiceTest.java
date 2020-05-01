@@ -1,4 +1,4 @@
-package com.otus.spring.hw07springdata.repository.service;
+package com.otus.spring.hw07springdata.service;
 
 import com.otus.spring.hw07springdata.domain.Author;
 import com.otus.spring.hw07springdata.domain.Book;
@@ -7,7 +7,6 @@ import com.otus.spring.hw07springdata.domain.Genre;
 import com.otus.spring.hw07springdata.dto.AuthorDTO;
 import com.otus.spring.hw07springdata.dto.BookDTO;
 import com.otus.spring.hw07springdata.dto.CommentDTO;
-import com.otus.spring.hw07springdata.service.MappingService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;

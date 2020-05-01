@@ -11,6 +11,7 @@ import com.otus.spring.hw07springdata.dto.GenreDTO;
 import org.mapstruct.Mapper;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper
 public interface MappingService {
@@ -36,11 +37,15 @@ public interface MappingService {
 
     List<CommentDTO> mapCommentsToDtos(List<Comment> comments);
 
-    List<Comment> mapDtosToComments(List<CommentDTO> comments);
-
     List<Author> mapDtosToAuthors(List<AuthorDTO> authors);
 
+    Set<Author> mapDtosToAuthors(Set<AuthorDTO> authors);
+
     List<Book> mapDtosToBooks(List<BookDTO> books);
+
+    List<Comment> mapDtosToComments(List<CommentDTO> comments);
+
+    Set<Comment> mapDtosToComments(Set<CommentDTO> comments);
 
     List<Genre> mapDtosToGenres(List<GenreDTO> genres);
 

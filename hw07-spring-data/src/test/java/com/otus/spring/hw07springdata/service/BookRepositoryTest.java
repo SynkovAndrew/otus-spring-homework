@@ -1,10 +1,13 @@
-package com.otus.spring.hw07springdata.repository;
+package com.otus.spring.hw07springdata.service;
 
-import com.otus.spring.hw07springdata.domain.Author;
-import com.otus.spring.hw07springdata.domain.Book;
-import com.otus.spring.hw07springdata.domain.Genre;
+import com.otus.spring.hw07springdata.dto.AuthorDTO;
+import com.otus.spring.hw07springdata.dto.BookDTO;
+import com.otus.spring.hw07springdata.dto.GenreDTO;
+import com.otus.spring.hw07springdata.repository.BookRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -18,32 +21,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BookRepositoryTest {
     @Autowired
     private BookRepository repository;
+    private BookService service;
 
     @Test
     @DisplayName("Create new book")
     public void createTest() {
-        final Book book = Book.builder()
+        final BookDTO book = BookDTO.builder()
                 .name("Nineteen Eighty-Four")
-                .authors(newHashSet(Author.builder().id(3).build()))
-                .genre(Genre.builder().id(5).build())
+                .authors(newHashSet(AuthorDTO.builder().id(3).build()))
+                .genre(GenreDTO.builder().id(5).build())
                 .year(1949)
                 .build();
-
-        repository.save(book);
-
-        final List<Book> all = repository.findAll();
+        final var result = service.createOrUpdate(book);
+        assertThat(result).isPresent();
+        final List<BookDTO> all = service.findAll();
         assertThat(all).size().isEqualTo(8);
         assertThat(all).extracting("name").containsOnlyOnce("Nineteen Eighty-Four");
         assertThat(all).extracting("year").containsOnlyOnce(1949);
     }
 
-
     @Test
     @DisplayName("Delete book")
     public void deleteTest() {
-       repository.deleteById(4);
-
-        final List<Book> all = repository.findAll();
+        final var result = service.deleteOne(4);
+        assertThat(result).isPresent();
+        final List<BookDTO> all = service.findAll();
         assertThat(all).size().isEqualTo(6);
         assertThat(all).extracting("id").containsOnly(1, 2, 3, 5, 6, 7);
         assertThat(all).extracting("name")
@@ -62,7 +64,7 @@ public class BookRepositoryTest {
     @Test
     @DisplayName("Find all books")
     public void findAllTest() {
-        final List<Book> all = repository.findAll();
+        final List<BookDTO> all = service.findAll();
         assertThat(all).size().isEqualTo(7);
         assertThat(all).extracting("id").containsOnly(1, 2, 3, 4, 5, 6, 7);
         assertThat(all).extracting("name")
@@ -95,7 +97,7 @@ public class BookRepositoryTest {
     @Test
     @DisplayName("Find book by id")
     public void findByIdTest() {
-        final Optional<Book> book = repository.findById(2);
+        final Optional<BookDTO> book = service.findOne(2);
         assertThat(book).isPresent();
         assertThat(book).get().extracting("id").isEqualTo(2);
         assertThat(book).get().extracting("name").isEqualTo("The Black Obelisk");
@@ -109,28 +111,33 @@ public class BookRepositoryTest {
         assertThat(book.get().getComments()).extracting("value").containsOnly("Good book!");
     }
 
+    @BeforeEach
+    public void setUp() {
+        service = new BookService(repository, Mappers.getMapper(MappingService.class));
+    }
 
     @Test
     @DisplayName("Update book")
     public void updateTest() {
-        repository.save(Book.builder()
+        final var result = service.createOrUpdate(BookDTO.builder()
                 .name("The Black Swan")
                 .id(4)
                 .year(1967)
-                .authors(newHashSet(Author.builder().id(1).build(), Author.builder().id(2).build()))
-                .genre(Genre.builder().id(2).build())
+                .authors(newHashSet(AuthorDTO.builder().id(1).build(), AuthorDTO.builder().id(2).build()))
+                .genre(GenreDTO.builder().id(2).build())
                 .build());
-        final Book book = repository.getOne(4);
-        assertThat(book).isNotNull();
-        assertThat(book).extracting("id").isEqualTo(4);
-        assertThat(book).extracting("year").isEqualTo(1967);
-        assertThat(book).extracting("name").isEqualTo("The Black Swan");
-        assertThat(book.getAuthors()).isNotEmpty();
-        assertThat(book.getAuthors()).extracting("name")
+        assertThat(result).isPresent();
+        final Optional<BookDTO> book = service.findOne(4);
+        assertThat(book).isPresent();
+        assertThat(book).get().extracting("id").isEqualTo(4);
+        assertThat(book).get().extracting("year").isEqualTo(1967);
+        assertThat(book).get().extracting("name").isEqualTo("The Black Swan");
+        assertThat(book.get().getAuthors()).isNotEmpty();
+        assertThat(book.get().getAuthors()).extracting("name")
                 .containsOnly("Erich Maria Remarque", "Ernest Hemingway");
-        assertThat(book.getAuthors()).extracting("id")
+        assertThat(book.get().getAuthors()).extracting("id")
                 .containsOnly(1, 2);
-        assertThat(book).extracting("genre.name").isEqualTo("History");
-        assertThat(book).extracting("genre.id").isEqualTo(2);
+        assertThat(book).get().extracting("genre.name").isEqualTo("History");
+        assertThat(book).get().extracting("genre.id").isEqualTo(2);
     }
 }
