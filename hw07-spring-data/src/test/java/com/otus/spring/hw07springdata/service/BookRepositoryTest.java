@@ -100,6 +100,62 @@ public class BookRepositoryTest {
     }
 
     @Test
+    @DisplayName("Find books by genre")
+    public void findBooksByAuthorTest() {
+        final List<BookDTO> all = service.findByAuthor(1);
+        assertThat(all).size().isEqualTo(2);
+        assertThat(all).extracting("id").containsOnly(1, 2);
+        assertThat(all).extracting("name").containsOnly(
+                "The Night in Lisbon", "The Black Obelisk");
+        assertThat(all).extracting("year")
+                .containsOnly(1964, 1957);
+        assertThat(all).flatExtracting("authors").isNotEmpty();
+        assertThat(all).flatExtracting("authors").extracting("name")
+                .containsOnly("Erich Maria Remarque", "Erich Maria Remarque");
+        assertThat(all).flatExtracting("authors").extracting("id")
+                .containsOnly(1, 1);
+        assertThat(all).flatExtracting("comments").extracting("id")
+                .containsOnly(1, 2, 3);
+        assertThat(all).flatExtracting("comments").extracting("value")
+                .containsOnly("Interesting book. Hope everybody will enjoy it!",
+                        "The greatest I ever read!",
+                        "Good book!");
+        assertThat(all).extracting("genre.id")
+                .containsOnly(6, 6);
+        assertThat(all).extracting("genre.name")
+                .containsOnly("Fiction", "Fiction");
+    }
+
+    @Test
+    @DisplayName("Find books by genre")
+    public void findBooksByGenreTest() {
+        final List<BookDTO> all = service.findByGenre(6);
+        assertThat(all).size().isEqualTo(4);
+        assertThat(all).extracting("id").containsOnly(1, 2, 3, 4);
+        assertThat(all).extracting("name").containsOnly(
+                "The Night in Lisbon", "The Black Obelisk", "The Old Man and the Sea", "The Sun Also Rises");
+        assertThat(all).extracting("year")
+                .containsOnly(1964, 1957, 1951, 1927);
+        assertThat(all).flatExtracting("authors").isNotEmpty();
+        assertThat(all).flatExtracting("authors").extracting("name")
+                .containsOnly("Erich Maria Remarque", "Erich Maria Remarque", "Ernest Hemingway", "Ernest Hemingway");
+        assertThat(all).flatExtracting("authors").extracting("id")
+                .containsOnly(1, 1, 2, 2);
+        assertThat(all).flatExtracting("comments").extracting("id")
+                .containsOnly(1, 2, 3, 4, 5);
+        assertThat(all).flatExtracting("comments").extracting("value")
+                .containsOnly("Interesting book. Hope everybody will enjoy it!",
+                        "The greatest I ever read!",
+                        "Good book!",
+                        "The good one. I have advised it to my father",
+                        "I dont really like it, coudnt even finish it...");
+        assertThat(all).extracting("genre.id")
+                .containsOnly(6, 6, 6, 6);
+        assertThat(all).extracting("genre.name")
+                .containsOnly("Fiction", "Fiction", "Fiction", "Fiction");
+    }
+
+    @Test
     @DisplayName("Find book by id")
     public void findByIdTest() {
         final Optional<BookDTO> book = service.findOne(2);

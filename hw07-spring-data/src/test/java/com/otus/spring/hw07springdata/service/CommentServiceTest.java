@@ -1,6 +1,5 @@
 package com.otus.spring.hw07springdata.service;
 
-import com.otus.spring.hw07springdata.domain.Comment;
 import com.otus.spring.hw07springdata.dto.comment.AddCommentToBookRequestDTO;
 import com.otus.spring.hw07springdata.dto.comment.CommentDTO;
 import com.otus.spring.hw07springdata.dto.comment.RemoveCommentFromBookRequestDTO;
@@ -11,8 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mapstruct.factory.Mappers.getMapper;

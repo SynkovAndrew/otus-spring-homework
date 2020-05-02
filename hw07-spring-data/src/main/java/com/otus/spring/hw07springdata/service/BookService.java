@@ -69,6 +69,16 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
+    public List<BookDTO> findByGenre(final int genreId) {
+        return mappingService.mapBooksToDtos(bookRepository.findByGenreId(genreId));
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookDTO> findByAuthor(final int authorId) {
+        return mappingService.mapBooksToDtos(bookRepository.findByAuthorId(authorId));
+    }
+
+    @Transactional(readOnly = true)
     public Optional<BookDTO> findOne(final int id) {
         return bookRepository.findById(id)
                 .map(mappingService::map);
