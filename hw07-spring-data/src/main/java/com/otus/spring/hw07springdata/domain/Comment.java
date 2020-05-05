@@ -18,6 +18,7 @@ public class Comment {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     @Column(name = "value", nullable = false, length = 1000)
     private String value;
 }

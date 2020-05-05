@@ -25,20 +25,25 @@ public class Book {
     )
     @Builder.Default
     private Set<Author> authors = new HashSet<>();
+
     @Fetch(FetchMode.SUBSELECT)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", nullable = false)
     @Builder.Default
     private Set<Comment> comments = new HashSet<>();
+
     @ManyToOne
     @JoinColumn(name = "genre_id", nullable = false)
     private Genre genre;
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     @Column(name = "name", nullable = false)
     private String name;
+
     @Column(name = "year")
     private Integer year;
 }
