@@ -14,7 +14,7 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"comments", "authors"})
+@ToString(exclude = {"authors"})
 public class Book {
     @Fetch(FetchMode.SUBSELECT)
     @ManyToMany(fetch = FetchType.LAZY)
@@ -25,12 +25,6 @@ public class Book {
     )
     @Builder.Default
     private Set<Author> authors = new HashSet<>();
-
-    @Fetch(FetchMode.SUBSELECT)
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id", nullable = false)
-    @Builder.Default
-    private Set<Comment> comments = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "genre_id", nullable = false)

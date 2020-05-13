@@ -29,9 +29,10 @@ public class CommentService {
     public Optional<CommentDTO> add(final AddCommentToBookRequestDTO request) {
         return bookRepository.findById(request.getBookId())
                 .map(book -> {
-                    final var comment = Comment.builder().value(request.getComment()).build();
-                    book.getComments().add(comment);
-                    bookRepository.save(book);
+                    final var comment = commentRepository.save(Comment.builder()
+                            .book(book)
+                            .value(request.getComment())
+                            .build());
                     return of(mappingService.map(comment));
                 })
                 .orElse(empty());
@@ -46,22 +47,16 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public Set<CommentDTO> findAllByBookId(final int bookId) {
-        return bookRepository.findById(bookId)
-                .map(Book::getComments)
-                .map(mappingService::mapCommentsToDtos)
-                .orElse(Set.of());
+        return mappingService.mapCommentsToDtos(commentRepository.findAllByBookId(bookId));
     }
 
     @Transactional
     public Optional<CommentDTO> remove(final RemoveCommentFromBookRequestDTO request) {
-        return bookRepository.findById(request.getBookId())
-                .flatMap(book -> ofNullable(book.getComments()).orElse(emptySet()).stream()
-                        .filter(c -> c.getId().equals(request.getCommentId()))
-                        .findFirst()
-                        .map(found -> {
-                            book.getComments().remove(found);
-                            bookRepository.save(book);
-                            return mappingService.map(found);
-                        }));
+        return commentRepository.findById(request.getCommentId())
+                .map(comment -> {
+                    commentRepository.delete(comment);
+                    return Optional.of(mappingService.map(comment));
+                })
+                .orElse(Optional.empty());
     }
 }

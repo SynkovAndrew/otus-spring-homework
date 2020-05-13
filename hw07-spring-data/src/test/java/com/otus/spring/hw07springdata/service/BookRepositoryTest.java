@@ -83,16 +83,6 @@ public class BookRepositoryTest {
                         "Ernest Hemingway", "George Orwell", "Sigmund Freud");
         assertThat(all).flatExtracting("authors").extracting("id")
                 .containsOnly(1, 1, 2, 2, 3, 4);
-        assertThat(all).flatExtracting("comments").extracting("id")
-                .containsOnly(1, 2, 3, 4, 5, 6, 7);
-        assertThat(all).flatExtracting("comments").extracting("value")
-                .containsOnly("Interesting book. Hope everybody will enjoy it!",
-                        "The greatest I ever read!",
-                        "The good one. I have advised it to my father",
-                        "Good book!",
-                        "I dont really like it, coudnt even finish it...",
-                        "I love this book. I have re-read it 3 times already!",
-                        "It is difficult one but worth to read it!");
         assertThat(all).extracting("genre.id")
                 .containsOnly(6, 6, 6, 6, 5, 4);
         assertThat(all).extracting("genre.name")
@@ -114,12 +104,6 @@ public class BookRepositoryTest {
                 .containsOnly("Erich Maria Remarque", "Erich Maria Remarque");
         assertThat(all).flatExtracting("authors").extracting("id")
                 .containsOnly(1, 1);
-        assertThat(all).flatExtracting("comments").extracting("id")
-                .containsOnly(1, 2, 3);
-        assertThat(all).flatExtracting("comments").extracting("value")
-                .containsOnly("Interesting book. Hope everybody will enjoy it!",
-                        "The greatest I ever read!",
-                        "Good book!");
         assertThat(all).extracting("genre.id")
                 .containsOnly(6, 6);
         assertThat(all).extracting("genre.name")
@@ -141,14 +125,6 @@ public class BookRepositoryTest {
                 .containsOnly("Erich Maria Remarque", "Erich Maria Remarque", "Ernest Hemingway", "Ernest Hemingway");
         assertThat(all).flatExtracting("authors").extracting("id")
                 .containsOnly(1, 1, 2, 2);
-        assertThat(all).flatExtracting("comments").extracting("id")
-                .containsOnly(1, 2, 3, 4, 5);
-        assertThat(all).flatExtracting("comments").extracting("value")
-                .containsOnly("Interesting book. Hope everybody will enjoy it!",
-                        "The greatest I ever read!",
-                        "Good book!",
-                        "The good one. I have advised it to my father",
-                        "I dont really like it, coudnt even finish it...");
         assertThat(all).extracting("genre.id")
                 .containsOnly(6, 6, 6, 6);
         assertThat(all).extracting("genre.name")
@@ -167,9 +143,6 @@ public class BookRepositoryTest {
         assertThat(book.get().getAuthors()).isNotEmpty();
         assertThat(book.get().getAuthors()).extracting("name").containsOnly("Erich Maria Remarque");
         assertThat(book.get().getAuthors()).extracting("id").containsOnly(1);
-        assertThat(book.get().getComments()).isNotEmpty();
-        assertThat(book.get().getComments()).extracting("id").containsOnly(3);
-        assertThat(book.get().getComments()).extracting("value").containsOnly("Good book!");
     }
 
     @BeforeEach

@@ -37,12 +37,11 @@ public class CommentServiceTest {
         final var result2 = commentService.add(request2);
         assertThat(result1).isPresent();
         assertThat(result2).isPresent();
-        final var book = bookRepository.getOne(4);
-        assertThat(book).isNotNull();
-        assertThat(book.getComments()).isNotNull();
-        assertThat(book.getComments()).hasSize(2);
-        assertThat(book.getComments()).extracting("id").doesNotContainNull();
-        assertThat(book.getComments()).extracting("value")
+        final var comments = commentRepository.findAllByBookId(4);
+        assertThat(comments).hasSize(2);
+        assertThat(comments).extracting("id").doesNotContainNull();
+        assertThat(comments).extracting("book.id").containsOnly(4);
+        assertThat(comments).extracting("value")
                 .containsOnly("What a beautiful thing!!!", "The best!!!");
     }
 
@@ -83,11 +82,11 @@ public class CommentServiceTest {
                 .commentId(1)
                 .build());
         assertThat(response).isPresent();
-        final var book = bookRepository.getOne(1);
-        assertThat(book).isNotNull();
-        assertThat(book.getComments()).hasSize(1);
-        assertThat(book.getComments()).extracting("id").doesNotContainNull();
-        assertThat(book.getComments()).extracting("value")
+        final var comments = commentRepository.findAllByBookId(1);
+        assertThat(comments).hasSize(1);
+        assertThat(comments).extracting("id").doesNotContainNull();
+        assertThat(comments).extracting("book.id").containsOnly(1);
+        assertThat(comments).extracting("value")
                 .containsOnly("The greatest I ever read!");
     }
 

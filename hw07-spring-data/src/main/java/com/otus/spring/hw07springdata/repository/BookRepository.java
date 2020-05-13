@@ -19,6 +19,4 @@ public interface BookRepository extends JpaRepository<Book, Integer>, JpaSpecifi
     }
 
     List<Book> findByGenreId(int genreId);
-
-
 }

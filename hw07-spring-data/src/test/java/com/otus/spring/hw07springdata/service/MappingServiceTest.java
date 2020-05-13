@@ -41,10 +41,6 @@ public class MappingServiceTest {
                         Author.builder().id(1).name("Taras").build(),
                         Author.builder().id(2).name("Maxim").build()
                 ))
-                .comments(newHashSet(
-                        Comment.builder().id(1).value("Good").build(),
-                        Comment.builder().id(1).value("Excellent").build()
-                ))
                 .year(1251)
                 .genre(Genre.builder().id(1).name("Fantasy").build())
                 .build();

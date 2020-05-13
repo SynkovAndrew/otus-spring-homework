@@ -17,7 +17,6 @@ import java.util.Set;
 @AllArgsConstructor
 public class BookDTO {
     private Set<AuthorDTO> authors;
-    private Set<CommentDTO> comments;
     private GenreDTO genre;
     private Integer id;
     private String name;
