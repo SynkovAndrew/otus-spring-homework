@@ -4,6 +4,7 @@ import com.otus.spring.hw09thymeleaf.dto.book.BookDTO;
 import com.otus.spring.hw09thymeleaf.dto.book.CreateOrUpdateBookRequestDTO;
 import com.otus.spring.hw09thymeleaf.repository.AuthorRepository;
 import com.otus.spring.hw09thymeleaf.repository.BookRepository;
+import com.otus.spring.hw09thymeleaf.repository.CommentRepository;
 import com.otus.spring.hw09thymeleaf.repository.GenreRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,6 +25,8 @@ public class BookServiceTest {
     private AuthorRepository authorRepository;
     @Autowired
     private BookRepository bookRepository;
+    @Autowired
+    private CommentRepository commentRepository;
     @Autowired
     private GenreRepository genreRepository;
     private BookService service;
@@ -147,7 +150,13 @@ public class BookServiceTest {
 
     @BeforeEach
     public void setUp() {
-        service = new BookService(authorRepository, bookRepository, genreRepository, getMapper(MappingService.class));
+        service = new BookService(
+                authorRepository,
+                bookRepository,
+                commentRepository,
+                genreRepository,
+                getMapper(MappingService.class)
+        );
     }
 
     @Test

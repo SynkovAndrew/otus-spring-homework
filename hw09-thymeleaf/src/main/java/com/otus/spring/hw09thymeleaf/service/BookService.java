@@ -6,6 +6,7 @@ import com.otus.spring.hw09thymeleaf.dto.book.CreateOrUpdateBookRequestDTO;
 import com.otus.spring.hw09thymeleaf.dto.book.FindBooksResponseDTO;
 import com.otus.spring.hw09thymeleaf.repository.AuthorRepository;
 import com.otus.spring.hw09thymeleaf.repository.BookRepository;
+import com.otus.spring.hw09thymeleaf.repository.CommentRepository;
 import com.otus.spring.hw09thymeleaf.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import static java.util.Optional.ofNullable;
 public class BookService {
     private final AuthorRepository authorRepository;
     private final BookRepository bookRepository;
+    private final CommentRepository commentRepository;
     private final GenreRepository genreRepository;
     private final MappingService mappingService;
 
@@ -58,6 +60,7 @@ public class BookService {
     public Optional<BookDTO> deleteOne(final int id) {
         return bookRepository.findById(id)
                 .map(book -> {
+                    commentRepository.deleteByBookId(id);
                     bookRepository.delete(book);
                     return mappingService.map(book);
                 });

@@ -8,5 +8,7 @@ import java.util.Set;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
+    void deleteByBookId(int bookId);
+
     Set<Comment> findAllByBookId(Integer bookId);
 }

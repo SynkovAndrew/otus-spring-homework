@@ -11,28 +11,40 @@
 </head>
 <body>
 <div class="main-div">
-    <form>
+    <form th:action="@{'/book' + ${book.id != null ? '/' + book.id : ''}}"
+          th:object="${saveBookRequest}"
+          method="post">
         <div class="form-group">
             <label for="name">Name:</label>
-            <input class="form-control" id="name" value="The Last Hero" th:value="${book.name}">
+            <input class="form-control"
+                   id="name"
+                   value="The Last Hero"
+                   th:field="*{name}"
+                   th:value="${book.name}">
         </div>
         <div class="form-group">
             <label for="year">Year:</label>
-            <input class="form-control" id="year" value="1945" th:value="${book.year}">
+            <input class="form-control"
+                   id="year"
+                   value="1945"
+                   th:field="*{year}"
+                   th:value="${book.year}">
         </div>
         <div class="form-group">
             <label for="genre">Genre:</label>
-            <select class="custom-select" id="genre">
-                <option th:text="${book.genre.name}" selected>Novel</option>
-                <option th:each="genre : ${genres}" th:text="${genre.name}">Novel</option>
+            <select class="custom-select" id="genre" th:field="*{genreId}">
+                <option value="0" selected></option>
+                <option th:each="genre : ${genres}"
+                        th:value="${genre.id.toString()}"
+                        th:text="${genre.name}">
+                </option>
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Save</button>
         <button class="btn btn-secondary">
-            <a th:href="@{'/'}" href="/book/1">Cancel</a>
+            <a th:href="@{'/'}">Cancel</a>
         </button>
     </form>
 </div>
-
 </body>
 </html>
