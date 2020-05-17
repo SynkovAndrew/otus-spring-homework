@@ -78,7 +78,6 @@ public class CommentServiceTest {
     @DisplayName("Remove comment")
     public void removeCommentTest() {
         final var response = commentService.remove(RemoveCommentFromBookRequestDTO.builder()
-                .bookId(1)
                 .commentId(1)
                 .build());
         assertThat(response).isPresent();

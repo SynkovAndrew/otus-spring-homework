@@ -6,7 +6,6 @@ import com.otus.spring.hw09thymeleaf.dto.book.BookDTO;
 import com.otus.spring.hw09thymeleaf.dto.book.CreateOrUpdateBookRequestDTO;
 import com.otus.spring.hw09thymeleaf.dto.book.FindAuthorsRequestDTO;
 import com.otus.spring.hw09thymeleaf.dto.comment.AddCommentToBookRequestDTO;
-import com.otus.spring.hw09thymeleaf.dto.comment.RemoveCommentFromBookRequestDTO;
 import com.otus.spring.hw09thymeleaf.dto.genre.GenreDTO;
 import com.otus.spring.hw09thymeleaf.service.AuthorService;
 import com.otus.spring.hw09thymeleaf.service.BookService;
@@ -78,10 +77,6 @@ public class ViewController {
         model.addAttribute("comments", comments);
         model.addAttribute("addCommentRequest",
                 AddCommentToBookRequestDTO.builder()
-                        .bookId(book.getId())
-                        .build());
-        model.addAttribute("deleteCommentRequest",
-                RemoveCommentFromBookRequestDTO.builder()
                         .bookId(book.getId())
                         .build());
         return "book-comments";

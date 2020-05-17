@@ -10,6 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RemoveCommentFromBookRequestDTO {
-    private Integer bookId;
     private Integer commentId;
 }

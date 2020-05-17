@@ -6,6 +6,7 @@ import com.otus.spring.hw09thymeleaf.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -14,17 +15,20 @@ import org.springframework.web.servlet.ModelAndView;
 public class CommentController {
     private final CommentService commentService;
 
-    @PostMapping("/comment/add")
-    public ModelAndView addComment(final @ModelAttribute AddCommentToBookRequestDTO request) {
+    @PostMapping("/book/{bookId}/comment/add")
+    public ModelAndView addComment(final @PathVariable("bookId") int bookId,
+                                   final @ModelAttribute AddCommentToBookRequestDTO request) {
+        request.setBookId(bookId);
         commentService.add(request);
-        final var bookId = request.getBookId();
         return new ModelAndView("redirect:/" + String.format("book/%d/comments", bookId));
     }
 
-    @PostMapping("/comment/delete")
-    public ModelAndView deleteComment(final @ModelAttribute RemoveCommentFromBookRequestDTO request) {
-        commentService.remove(request);
-        final var bookId = request.getBookId();
+    @PostMapping("/book/{bookId}/comment/{commentId}/delete")
+    public ModelAndView deleteComment(final @PathVariable("bookId") int bookId,
+                                      final @PathVariable("commentId") int commentId) {
+        commentService.remove(RemoveCommentFromBookRequestDTO.builder()
+                .commentId(commentId)
+                .build());
         return new ModelAndView("redirect:/" + String.format("book/%d/comments", bookId));
     }
 }

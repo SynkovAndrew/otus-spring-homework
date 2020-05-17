@@ -22,7 +22,8 @@
                    id="name"
                    value="The Last Hero"
                    th:field="*{name}"
-                   th:value="${book.name}">
+                   th:value="${book.name}"
+                   required>
         </div>
         <div class="form-group">
             <label for="year">Year:</label>
@@ -30,11 +31,12 @@
                    id="year"
                    value="1945"
                    th:field="*{year}"
-                   th:value="${book.year}">
+                   th:value="${book.year}"
+                   required>
         </div>
         <div class="form-group">
             <label for="genre">Genre:</label>
-            <select class="custom-select" id="genre" th:field="*{genreId}">
+            <select class="custom-select" id="genre" th:field="*{genreId}" required>
                 <option value="0" selected></option>
                 <option th:each="genre : ${genres}"
                         th:value="${genre.id.toString()}"
@@ -77,7 +79,7 @@
           method="post"
           th:action="@{ '/book/' + ${book.id} + '/add/author/' }">
         <label class="sr-only" for="author">Author:</label>
-        <select class="custom-select" id="author" th:name="authorId">
+        <select class="custom-select" id="author" th:name="authorId" required>
             <option value="0" selected></option>
             <option th:each="author : ${authors}"
                     th:value="${author.id.toString()}"
