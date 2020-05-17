@@ -26,6 +26,13 @@ public class BookController {
         return new ModelAndView("redirect:/");
     }
 
+    @PostMapping("/book/{bookId}/delete/author/{authorId}")
+    public ModelAndView deleteAuthor(final @PathVariable("bookId") int bookId,
+                                     final @PathVariable("authorId") int authorId) {
+        bookService.deleteAuthor(bookId, authorId);
+        return new ModelAndView("redirect:/" + String.format("book/%d", bookId));
+    }
+
     @PostMapping("/book/{bookId}")
     public ModelAndView update(final @PathVariable("bookId") int bookId,
                                final @ModelAttribute CreateOrUpdateBookRequestDTO request) {

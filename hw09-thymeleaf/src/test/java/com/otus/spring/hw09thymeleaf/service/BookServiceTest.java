@@ -64,6 +64,16 @@ public class BookServiceTest {
     }
 
     @Test
+    @DisplayName("Delete author from book")
+    public void deleteAuthorTest() {
+        service.deleteAuthor(4, 2);
+        final Optional<BookDTO> book = service.findOne(4);
+        assertThat(book).isPresent();
+        assertThat(book).get().extracting("id").isEqualTo(4);
+        assertThat(book.get().getAuthors()).isEmpty();
+    }
+
+    @Test
     @DisplayName("Find absent book by id")
     public void findAbsentByIdTest() {
         assertThat(service.findOne(212)).isNotPresent();
@@ -80,12 +90,6 @@ public class BookServiceTest {
                         "Animal Farm", "The Psychopathology of Everyday Life", "The Authorless Book");
         assertThat(all).extracting("year")
                 .containsOnly(1964, 1957, 1951, 1927, 1945, 1904, 1974);
-        assertThat(all).flatExtracting("authors").isNotEmpty();
-        assertThat(all).flatExtracting("authors").extracting("name")
-                .containsOnly("Erich Maria Remarque", "Erich Maria Remarque", "Ernest Hemingway",
-                        "Ernest Hemingway", "George Orwell", "Sigmund Freud");
-        assertThat(all).flatExtracting("authors").extracting("id")
-                .containsOnly(1, 1, 2, 2, 3, 4);
         assertThat(all).extracting("genre.id")
                 .containsOnly(6, 6, 6, 6, 5, 4);
         assertThat(all).extracting("genre.name")
@@ -102,11 +106,6 @@ public class BookServiceTest {
                 "The Night in Lisbon", "The Black Obelisk");
         assertThat(all).extracting("year")
                 .containsOnly(1964, 1957);
-        assertThat(all).flatExtracting("authors").isNotEmpty();
-        assertThat(all).flatExtracting("authors").extracting("name")
-                .containsOnly("Erich Maria Remarque", "Erich Maria Remarque");
-        assertThat(all).flatExtracting("authors").extracting("id")
-                .containsOnly(1, 1);
         assertThat(all).extracting("genre.id")
                 .containsOnly(6, 6);
         assertThat(all).extracting("genre.name")
@@ -123,11 +122,6 @@ public class BookServiceTest {
                 "The Night in Lisbon", "The Black Obelisk", "The Old Man and the Sea", "The Sun Also Rises");
         assertThat(all).extracting("year")
                 .containsOnly(1964, 1957, 1951, 1927);
-        assertThat(all).flatExtracting("authors").isNotEmpty();
-        assertThat(all).flatExtracting("authors").extracting("name")
-                .containsOnly("Erich Maria Remarque", "Erich Maria Remarque", "Ernest Hemingway", "Ernest Hemingway");
-        assertThat(all).flatExtracting("authors").extracting("id")
-                .containsOnly(1, 1, 2, 2);
         assertThat(all).extracting("genre.id")
                 .containsOnly(6, 6, 6, 6);
         assertThat(all).extracting("genre.name")

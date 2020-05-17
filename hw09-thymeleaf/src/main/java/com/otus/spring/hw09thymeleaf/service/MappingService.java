@@ -12,6 +12,10 @@ import org.mapstruct.Mapper;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
 
 @Mapper
 public interface MappingService {
@@ -33,23 +37,24 @@ public interface MappingService {
 
     List<AuthorDTO> mapAuthorsToDtos(List<Author> authors);
 
-    List<BookDTO> mapBooksToDtos(List<Book> books);
+    default List<BookDTO> mapBooksToDtos(List<Book> books) {
+        return ofNullable(books).orElse(emptyList()).stream()
+                .map(book -> BookDTO.builder()
+                        .genre(map(book.getGenre()))
+                        .id(book.getId())
+                        .name(book.getName())
+                        .year(book.getYear())
+                        .build())
+                .collect(Collectors.toList());
+    }
 
     List<CommentDTO> mapCommentsToDtos(List<Comment> comments);
 
     Set<CommentDTO> mapCommentsToDtos(Set<Comment> comments);
 
-    List<Author> mapDtosToAuthors(List<AuthorDTO> authors);
-
     Set<Author> mapDtosToAuthors(Set<AuthorDTO> authors);
 
-    List<Book> mapDtosToBooks(List<BookDTO> books);
-
     List<Comment> mapDtosToComments(List<CommentDTO> comments);
-
-    Set<Comment> mapDtosToComments(Set<CommentDTO> comments);
-
-    List<Genre> mapDtosToGenres(List<GenreDTO> genres);
 
     List<GenreDTO> mapGenresToDtos(List<Genre> genres);
 }

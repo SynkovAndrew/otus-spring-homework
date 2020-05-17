@@ -57,6 +57,19 @@ public class BookService {
     }
 
     @Transactional
+    public void deleteAuthor(final int bookId, final int authorId) {
+        bookRepository.findById(bookId)
+                .ifPresent(book -> {
+                    final var authors = book.getAuthors();
+                    authors.stream()
+                            .filter(author -> author.getId() == authorId)
+                            .findFirst()
+                            .ifPresent(authors::remove);
+                    bookRepository.save(book);
+                });
+    }
+
+    @Transactional
     public Optional<BookDTO> deleteOne(final int id) {
         return bookRepository.findById(id)
                 .map(book -> {

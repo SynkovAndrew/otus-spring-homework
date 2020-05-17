@@ -3,6 +3,7 @@ package com.otus.spring.hw09thymeleaf.controller;
 import com.otus.spring.hw09thymeleaf.dto.book.BookDTO;
 import com.otus.spring.hw09thymeleaf.dto.book.CreateOrUpdateBookRequestDTO;
 import com.otus.spring.hw09thymeleaf.dto.genre.GenreDTO;
+import com.otus.spring.hw09thymeleaf.service.AuthorService;
 import com.otus.spring.hw09thymeleaf.service.BookService;
 import com.otus.spring.hw09thymeleaf.service.GenreService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import static java.util.Optional.ofNullable;
 @Controller
 @RequiredArgsConstructor
 public class ViewController {
+    private final AuthorService authorService;
     private final BookService bookService;
     private final GenreService genreService;
 
@@ -23,7 +25,7 @@ public class ViewController {
     public String book(final Model model) {
         final var genres = genreService.findAll();
         model.addAttribute("book", BookDTO.builder().build());
-        model.addAttribute("saveBookRequest",  CreateOrUpdateBookRequestDTO.builder().build());
+        model.addAttribute("saveBookRequest", CreateOrUpdateBookRequestDTO.builder().build());
         model.addAttribute("genres", genres);
         return "book";
     }
@@ -42,7 +44,10 @@ public class ViewController {
                 .id(book.getId())
                 .build();
         final var genres = genreService.findAll();
+        final var authors = authorService.findAll();
         model.addAttribute("book", book);
+        model.addAttribute("bookAuthors", book.getAuthors());
+        model.addAttribute("authors", authors);
         model.addAttribute("saveBookRequest", request);
         model.addAttribute("genres", genres);
         return "book";

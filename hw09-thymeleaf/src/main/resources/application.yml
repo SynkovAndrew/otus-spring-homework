@@ -7,6 +7,6 @@ spring:
     initialization-mode: always
   jpa:
     generate-ddl: false
-    show-sql: false
+    show-sql: true
     hibernate:
       ddl-auto: none

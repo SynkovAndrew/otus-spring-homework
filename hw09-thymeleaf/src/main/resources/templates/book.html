@@ -10,8 +10,10 @@
     <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet"/>
 </head>
 <body>
-<div class="main-div">
-    <form th:action="@{'/book' + ${book.id != null ? '/' + book.id : ''}}"
+<div id="book-details"
+     class="main-div">
+    <form id="save-book-form"
+          th:action="@{'/book' + ${book.id != null ? '/' + book.id : ''}}"
           th:object="${saveBookRequest}"
           method="post">
         <div class="form-group">
@@ -40,11 +42,38 @@
                 </option>
             </select>
         </div>
-        <button type="submit" class="btn btn-primary">Save</button>
+        <button form="save-book-form" type="submit" class="btn btn-primary">Save</button>
         <button class="btn btn-secondary">
             <a th:href="@{'/'}">Cancel</a>
         </button>
     </form>
+</div>
+<div id="book-authors" class="main-div">
+    <div class="form-group">
+        <label for="authors">Authors:</label>
+        <table class="table" id="authors">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col" class="short-column"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="bookAuthor : ${bookAuthors}" class="table-row">
+                <td th:text="${bookAuthor.id}">123</td>
+                <td th:text="${bookAuthor.name}">Dostoevsky</td>
+                <td>
+                    <button form="delete-author-form" type="submit" class="btn btn-danger">Delete</button>
+                    <form id="delete-author-form"
+                          method="post"
+                          th:action="@{ '/book/' + ${book.id} + '/delete/author/' + ${bookAuthor.id} }">
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 </body>
 </html>
