@@ -48,32 +48,44 @@
         </button>
     </form>
 </div>
-<div id="book-authors" class="main-div">
+<div id="book-authors" class="main-div" th:if="${book.id != null}">
     <div class="form-group">
         <label for="authors">Authors:</label>
         <table class="table" id="authors">
             <thead class="thead-dark">
             <tr>
-                <th scope="col">Id</th>
                 <th scope="col">Name</th>
                 <th scope="col" class="short-column"></th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="bookAuthor : ${bookAuthors}" class="table-row">
-                <td th:text="${bookAuthor.id}">123</td>
                 <td th:text="${bookAuthor.name}">Dostoevsky</td>
                 <td>
-                    <button form="delete-author-form" type="submit" class="btn btn-danger">Delete</button>
                     <form id="delete-author-form"
                           method="post"
                           th:action="@{ '/book/' + ${book.id} + '/delete/author/' + ${bookAuthor.id} }">
+                        <button form="delete-author-form" type="submit" class="btn btn-danger">Delete</button>
                     </form>
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
+    <form class="form-inline"
+          id="add-author-form"
+          method="post"
+          th:action="@{ '/book/' + ${book.id} + '/add/author/' }">
+        <label class="sr-only" for="author">Author:</label>
+        <select class="custom-select" id="author" th:name="authorId">
+            <option value="0" selected></option>
+            <option th:each="author : ${authors}"
+                    th:value="${author.id.toString()}"
+                    th:text="${author.name}">
+            </option>
+        </select>
+        <button type="submit" form="add-author-form" class="btn btn-primary margin-left">Add</button>
+    </form>
 </div>
 </body>
 </html>

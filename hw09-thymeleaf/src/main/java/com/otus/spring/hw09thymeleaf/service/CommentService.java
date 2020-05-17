@@ -2,6 +2,7 @@ package com.otus.spring.hw09thymeleaf.service;
 
 
 import com.otus.spring.hw09thymeleaf.domain.Comment;
+import com.otus.spring.hw09thymeleaf.dto.book.FindCommentsResponseDTO;
 import com.otus.spring.hw09thymeleaf.dto.comment.AddCommentToBookRequestDTO;
 import com.otus.spring.hw09thymeleaf.dto.comment.CommentDTO;
 import com.otus.spring.hw09thymeleaf.dto.comment.RemoveCommentFromBookRequestDTO;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-import java.util.Set;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -45,8 +45,11 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public Set<CommentDTO> findAllByBookId(final int bookId) {
-        return mappingService.mapCommentsToDtos(commentRepository.findAllByBookId(bookId));
+    public FindCommentsResponseDTO findAllByBookId(final int bookId) {
+        final var comments = mappingService.mapCommentsToDtos(commentRepository.findAllByBookId(bookId));
+        return FindCommentsResponseDTO.builder()
+                .comments(comments)
+                .build();
     }
 
     @Transactional

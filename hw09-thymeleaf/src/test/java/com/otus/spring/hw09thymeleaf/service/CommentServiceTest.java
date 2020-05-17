@@ -67,7 +67,7 @@ public class CommentServiceTest {
     @Test
     @DisplayName("Find all comments for certain book")
     public void findCommentsByBookId() {
-        final var comments = commentService.findAllByBookId(3);
+        final var comments = commentService.findAllByBookId(3).getComments();
         assertThat(comments).isNotNull();
         assertThat(comments).hasSize(2);
         assertThat(comments).extracting(CommentDTO::getValue).containsOnly(

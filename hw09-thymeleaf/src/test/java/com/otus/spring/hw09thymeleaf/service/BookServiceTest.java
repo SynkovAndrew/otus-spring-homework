@@ -32,6 +32,18 @@ public class BookServiceTest {
     private BookService service;
 
     @Test
+    @DisplayName("Delete author from book")
+    public void addAuthorTest() {
+        service.addAuthor(4, 3);
+        final Optional<BookDTO> book = service.findOne(4);
+        assertThat(book).isPresent();
+        assertThat(book).get().extracting("id").isEqualTo(4);
+        assertThat(book.get().getAuthors()).extracting("name")
+                .containsOnly("Erich Maria Remarque", "The Black Obelisk");
+        assertThat(book.get().getAuthors()).extracting("id").containsOnly(2, 4);
+    }
+
+    @Test
     @DisplayName("Create new book")
     public void createTest() {
         final var book = CreateOrUpdateBookRequestDTO.builder()
@@ -49,6 +61,16 @@ public class BookServiceTest {
     }
 
     @Test
+    @DisplayName("Delete author from book")
+    public void deleteAuthorTest() {
+        service.deleteAuthor(4, 2);
+        final Optional<BookDTO> book = service.findOne(4);
+        assertThat(book).isPresent();
+        assertThat(book).get().extracting("id").isEqualTo(4);
+        assertThat(book.get().getAuthors()).isEmpty();
+    }
+
+    @Test
     @DisplayName("Delete book")
     public void deleteTest() {
         final var result = service.deleteOne(4);
@@ -61,16 +83,6 @@ public class BookServiceTest {
                         "Animal Farm", "The Psychopathology of Everyday Life", "The Authorless Book");
         assertThat(all).extracting("year")
                 .containsOnly(1964, 1957, 1951, 1945, 1904, 1974);
-    }
-
-    @Test
-    @DisplayName("Delete author from book")
-    public void deleteAuthorTest() {
-        service.deleteAuthor(4, 2);
-        final Optional<BookDTO> book = service.findOne(4);
-        assertThat(book).isPresent();
-        assertThat(book).get().extracting("id").isEqualTo(4);
-        assertThat(book.get().getAuthors()).isEmpty();
     }
 
     @Test

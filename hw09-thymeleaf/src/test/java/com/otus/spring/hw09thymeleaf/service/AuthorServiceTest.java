@@ -3,6 +3,7 @@ package com.otus.spring.hw09thymeleaf.service;
 
 import com.otus.spring.hw09thymeleaf.dto.author.AuthorDTO;
 import com.otus.spring.hw09thymeleaf.dto.author.CreateOrUpdateAuthorRequestDTO;
+import com.otus.spring.hw09thymeleaf.dto.book.FindAuthorsRequestDTO;
 import com.otus.spring.hw09thymeleaf.repository.AuthorRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +33,7 @@ public class AuthorServiceTest {
     @Test
     @DisplayName("Find all authors")
     public void findAllTest() {
-        final List<AuthorDTO> all = service.findAll();
+        final List<AuthorDTO> all = service.findAll(FindAuthorsRequestDTO.builder().build());
         assertThat(all).size().isEqualTo(4);
         assertThat(all).extracting(AuthorDTO::getId).containsOnly(1, 2, 3, 4);
         assertThat(all).extracting(AuthorDTO::getName)

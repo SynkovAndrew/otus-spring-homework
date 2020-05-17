@@ -70,6 +70,16 @@ public class BookService {
     }
 
     @Transactional
+    public void addAuthor(final int bookId, final int authorId) {
+        bookRepository.findById(bookId)
+                .ifPresent(book -> {
+                    authorRepository.findById(authorId)
+                            .ifPresent(author -> book.getAuthors().add(author));
+                    bookRepository.save(book);
+                });
+    }
+
+    @Transactional
     public Optional<BookDTO> deleteOne(final int id) {
         return bookRepository.findById(id)
                 .map(book -> {

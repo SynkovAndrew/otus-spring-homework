@@ -15,23 +15,27 @@
     <table class="table">
         <thead class="thead-dark">
         <tr>
-            <th scope="col">Id</th>
             <th scope="col">Name</th>
             <th scope="col">Year</th>
             <th scope="col">Genre</th>
+            <th scope="col" class="short-column"></th>
             <th scope="col" class="short-column"></th>
             <th scope="col" class="short-column"></th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="book : ${books}" class="table-row">
-            <td th:text="${book.id}">123</td>
             <td th:text="${book.name}">The Last Hero</td>
             <td th:text="${book.year}">1956</td>
             <td th:text="${book.genre.name}">Novel</td>
             <td>
+                <button type="button" class="btn btn-success">
+                    <a th:href="@{'/book/' + ${book.id}} + '/comments'">View Comments</a>
+                </button>
+            </td>
+            <td>
                 <button type="button" class="btn btn-primary">
-                    <a th:href="@{'/book/' + ${book.id}}" href="/book/1">Edit</a>
+                    <a th:href="@{'/book/' + ${book.id}}">Edit</a>
                 </button>
             </td>
             <td>

@@ -3,6 +3,7 @@ package com.otus.spring.hw09thymeleaf.service;
 import com.otus.spring.hw09thymeleaf.domain.Author;
 import com.otus.spring.hw09thymeleaf.dto.author.AuthorDTO;
 import com.otus.spring.hw09thymeleaf.dto.author.CreateOrUpdateAuthorRequestDTO;
+import com.otus.spring.hw09thymeleaf.dto.book.FindAuthorsRequestDTO;
 import com.otus.spring.hw09thymeleaf.repository.AuthorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,8 +39,16 @@ public class AuthorService {
     }
 
     @Transactional(readOnly = true)
+    public List<AuthorDTO> findAll(final FindAuthorsRequestDTO request) {
+        return mappingService.mapAuthorsToDtos(authorRepository.findAll(request));
+    }
+
+    @Transactional(readOnly = true)
     public List<AuthorDTO> findAll() {
-        return mappingService.mapAuthorsToDtos(authorRepository.findAll());
+        return mappingService.mapAuthorsToDtos(authorRepository.findAll(
+                FindAuthorsRequestDTO.builder()
+                        .build()
+        ));
     }
 
     @Transactional(readOnly = true)
