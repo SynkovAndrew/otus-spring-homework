@@ -32,15 +32,15 @@ public class BookServiceTest {
     private BookService service;
 
     @Test
-    @DisplayName("Delete author from book")
+    @DisplayName("Add author to book")
     public void addAuthorTest() {
         service.addAuthor(4, 3);
         final Optional<BookDTO> book = service.findOne(4);
         assertThat(book).isPresent();
         assertThat(book).get().extracting("id").isEqualTo(4);
         assertThat(book.get().getAuthors()).extracting("name")
-                .containsOnly("Erich Maria Remarque", "The Black Obelisk");
-        assertThat(book.get().getAuthors()).extracting("id").containsOnly(2, 4);
+                .containsOnly("Ernest Hemingway", "George Orwell");
+        assertThat(book.get().getAuthors()).extracting("id").containsOnly(2, 3);
     }
 
     @Test
