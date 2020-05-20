@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Comments</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+          crossorigin="anonymous"/>
+    <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<div>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Comment</th>
+            <th scope="col" class="short-column"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="comment : ${comments}" class="table-row">
+            <td th:text="${comment.value}">The good one</td>
+            <td>
+                <form method="post"
+                      th:action="@{'/book/' + ${bookId} + '/comment/' + ${comment.id} + '/delete'}">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="main-div">
+    <form class="form-inline"
+          id="add-comment-form"
+          method="post"
+          th:object="${addCommentRequest}"
+          th:action="@{'/book/' + ${bookId} + '/comment/add'}">
+        <label class="sr-only" for="comment">Comment:</label>
+        <input type="text" class="form-control" id="comment" th:field="*{comment}" required>
+        <button type="submit" form="add-comment-form" class="btn btn-primary margin-left">Add</button>
+    </form>
+</div>
+<div class="main-div">
+    <button class="btn btn-secondary">
+        <a th:href="@{'/'}">Back</a>
+    </button>
+</div>
+
+</body>
+</html>
