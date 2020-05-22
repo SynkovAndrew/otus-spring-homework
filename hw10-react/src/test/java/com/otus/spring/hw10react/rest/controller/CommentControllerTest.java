@@ -1,4 +1,4 @@
-package com.otus.spring.hw10react.controller;
+package com.otus.spring.hw10react.rest.controller;
 
 import com.otus.spring.hw10react.service.AuthorService;
 import com.otus.spring.hw10react.service.BookService;

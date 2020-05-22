@@ -3,6 +3,8 @@ package com.otus.spring.hw10react.service;
 import com.otus.spring.hw10react.dto.comment.AddCommentToBookRequestDTO;
 import com.otus.spring.hw10react.dto.comment.CommentDTO;
 import com.otus.spring.hw10react.dto.comment.RemoveCommentFromBookRequestDTO;
+import com.otus.spring.hw10react.exception.BookNotFoundException;
+import com.otus.spring.hw10react.exception.CommentNotFoundException;
 import com.otus.spring.hw10react.repository.BookRepository;
 import com.otus.spring.hw10react.repository.CommentRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mapstruct.factory.Mappers.getMapper;
 
 @DataJpaTest
@@ -24,7 +27,7 @@ public class CommentServiceTest {
 
     @Test
     @DisplayName("Add comment to book")
-    public void addCommentTest() {
+    public void addCommentTest() throws BookNotFoundException {
         final var request1 = AddCommentToBookRequestDTO.builder()
                 .bookId(4)
                 .comment("What a beautiful thing!!!")
@@ -35,8 +38,8 @@ public class CommentServiceTest {
                 .build();
         final var result1 = commentService.add(request1);
         final var result2 = commentService.add(request2);
-        assertThat(result1).isPresent();
-        assertThat(result2).isPresent();
+        assertThat(result1).isNotNull();
+        assertThat(result2).isNotNull();
         final var comments = commentRepository.findAllByBookId(4);
         assertThat(comments).hasSize(2);
         assertThat(comments).extracting("id").doesNotContainNull();
@@ -52,16 +55,16 @@ public class CommentServiceTest {
                 .bookId(400)
                 .comment("What a beautiful thing!!!")
                 .build();
-        assertThat(commentService.add(request)).isNotPresent();
+        assertThrows(BookNotFoundException.class, () -> commentService.add(request));
     }
 
     @Test
     @DisplayName("Find comment of book")
-    public void findCommentTest() {
+    public void findCommentTest() throws CommentNotFoundException {
         final var comment = commentService.find(3);
-        assertThat(comment).isPresent();
-        assertThat(comment).get().extracting(CommentDTO::getId).isEqualTo(3);
-        assertThat(comment).get().extracting(CommentDTO::getValue).isEqualTo("Good book!");
+        assertThat(comment).isNotNull();
+        assertThat(comment).extracting(CommentDTO::getId).isEqualTo(3);
+        assertThat(comment).extracting(CommentDTO::getValue).isEqualTo("Good book!");
     }
 
     @Test
@@ -76,11 +79,11 @@ public class CommentServiceTest {
 
     @Test
     @DisplayName("Remove comment")
-    public void removeCommentTest() {
+    public void removeCommentTest() throws CommentNotFoundException {
         final var response = commentService.remove(RemoveCommentFromBookRequestDTO.builder()
                 .commentId(1)
                 .build());
-        assertThat(response).isPresent();
+        assertThat(response).isNotNull();
         final var comments = commentRepository.findAllByBookId(1);
         assertThat(comments).hasSize(1);
         assertThat(comments).extracting("id").doesNotContainNull();

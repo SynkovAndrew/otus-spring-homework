@@ -1,29 +1,9 @@
-package com.otus.spring.hw10react.controller;
+package com.otus.spring.hw10react.rest.controller;
 
-import com.otus.spring.hw10react.dto.author.AuthorDTO;
-import com.otus.spring.hw10react.dto.author.AuthorId;
-import com.otus.spring.hw10react.dto.book.*;
-import com.otus.spring.hw10react.dto.comment.AddCommentToBookRequestDTO;
-import com.otus.spring.hw10react.dto.comment.CommentDTO;
-import com.otus.spring.hw10react.dto.genre.GenreDTO;
-import com.otus.spring.hw10react.service.AuthorService;
-import com.otus.spring.hw10react.service.BookService;
-import com.otus.spring.hw10react.service.CommentService;
-import com.otus.spring.hw10react.service.GenreService;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest
 public class ViewControllerTest {

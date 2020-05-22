@@ -76,7 +76,7 @@ public class BookServiceTest {
     @DisplayName("Delete author from book")
     public void deleteAuthorTest() throws BookNotFoundException {
         service.deleteAuthor(4, 2);
-        final BookDTO book = service.findOne(4);
+        final BookDTO book = service.find(4);
         assertThat(book).isNotNull();
         assertThat(book).extracting("id").isEqualTo(4);
         assertThat(book.getAuthors()).isEmpty();
@@ -106,7 +106,7 @@ public class BookServiceTest {
     @Test
     @DisplayName("Find absent book by id")
     public void findAbsentByIdTest() {
-        assertThrows(BookNotFoundException.class, () -> service.findOne(212));
+        assertThrows(BookNotFoundException.class, () -> service.find(212));
     }
 
     @Test
@@ -161,7 +161,7 @@ public class BookServiceTest {
     @Test
     @DisplayName("Find book by id")
     public void findByIdTest() throws BookNotFoundException {
-        final BookDTO book = service.findOne(2);
+        final BookDTO book = service.find(2);
         assertThat(book).isNotNull();
         assertThat(book).extracting("id").isEqualTo(2);
         assertThat(book).extracting("name").isEqualTo("The Black Obelisk");

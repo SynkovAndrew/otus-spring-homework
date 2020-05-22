@@ -1,4 +1,4 @@
-package com.otus.spring.hw10react.controller;
+package com.otus.spring.hw10react.rest.controller;
 
 import com.otus.spring.hw10react.dto.book.FindAuthorsRequestDTO;
 import com.otus.spring.hw10react.dto.book.FindAuthorsResponseDTO;
@@ -20,7 +20,7 @@ public class AuthorController {
     }
 
     @GetMapping("/api/v1/book/{bookId}/authors")
-    public FindAuthorsResponseDTO findAll(final @PathVariable("bookId") int bookId) {
+    public FindAuthorsResponseDTO findBookAuthors(final @PathVariable("bookId") int bookId) {
         return authorService.findBookAuthors(bookId);
     }
 }

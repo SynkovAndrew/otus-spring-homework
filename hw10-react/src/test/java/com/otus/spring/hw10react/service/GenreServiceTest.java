@@ -2,6 +2,7 @@ package com.otus.spring.hw10react.service;
 
 import com.otus.spring.hw10react.dto.genre.CreateOrUpdateGenreRequestDTO;
 import com.otus.spring.hw10react.dto.genre.GenreDTO;
+import com.otus.spring.hw10react.exception.GenreNotFoundException;
 import com.otus.spring.hw10react.repository.GenreRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,9 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 public class GenreServiceTest {
@@ -26,7 +27,7 @@ public class GenreServiceTest {
     public void createTest() {
         final var genre = CreateOrUpdateGenreRequestDTO.builder().name("Thriller").build();
         final var saved = service.createOrUpdate(genre);
-        assertThat(saved).isPresent();
+        assertThat(saved).isNotNull();
         final List<GenreDTO> all = service.findAll().getGenres();
         assertThat(all).size().isEqualTo(7);
         assertThat(all).extracting("name").containsOnlyOnce("Thriller");
@@ -35,8 +36,7 @@ public class GenreServiceTest {
     @Test
     @DisplayName("Find absent genre by id")
     public void findAbsentByIdTest() {
-        final Optional<GenreDTO> optional = service.findOne(222);
-        assertThat(optional).isNotPresent();
+        assertThrows(GenreNotFoundException.class, () -> service.find(222));
     }
 
     @Test
@@ -51,11 +51,11 @@ public class GenreServiceTest {
 
     @Test
     @DisplayName("Find genre by id")
-    public void findByIdTest() {
-        final Optional<GenreDTO> genre = service.findOne(4);
-        assertThat(genre).isPresent();
-        assertThat(genre).get().extracting("id").isEqualTo(4);
-        assertThat(genre).get().extracting("name").isEqualTo("Psychology");
+    public void findByIdTest() throws GenreNotFoundException {
+        final GenreDTO genre = service.find(4);
+        assertThat(genre).isNotNull();
+        assertThat(genre).extracting("id").isEqualTo(4);
+        assertThat(genre).extracting("name").isEqualTo("Psychology");
     }
 
     @BeforeEach
@@ -66,9 +66,9 @@ public class GenreServiceTest {
     @Test
     @DisplayName("Update absent genre")
     public void updateAbsentTest() {
-        final var response = service.createOrUpdate(
-                CreateOrUpdateGenreRequestDTO.builder().name("Non Fiction").id(222).build());
-        assertThat(response).isNotPresent();
+        assertThrows(GenreNotFoundException.class, () -> service.createOrUpdate(
+                CreateOrUpdateGenreRequestDTO.builder().name("Non Fiction").id(222).build()));
+
         final List<GenreDTO> all = service.findAll().getGenres();
         assertThat(all).size().isEqualTo(6);
         assertThat(all).extracting(GenreDTO::getName).doesNotContain("Non Fiction");
@@ -76,15 +76,15 @@ public class GenreServiceTest {
 
     @Test
     @DisplayName("Update genre")
-    public void updateTest() {
+    public void updateTest() throws GenreNotFoundException {
         final var result = service.createOrUpdate(CreateOrUpdateGenreRequestDTO.builder()
                 .name("Non Fiction")
                 .id(2)
                 .build());
-        assertThat(result).isPresent();
-        final Optional<GenreDTO> genre = service.findOne(2);
-        assertThat(genre).isPresent();
-        assertThat(genre).get().extracting("id").isEqualTo(2);
-        assertThat(genre).get().extracting("name").isEqualTo("Non Fiction");
+        assertThat(result).isNotNull();
+        final GenreDTO genre = service.find(2);
+        assertThat(genre).isNotNull();
+        assertThat(genre).extracting("id").isEqualTo(2);
+        assertThat(genre).extracting("name").isEqualTo("Non Fiction");
     }
 }

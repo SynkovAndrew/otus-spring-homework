@@ -8,7 +8,9 @@ import com.otus.spring.hw10react.dto.author.AuthorDTO;
 import com.otus.spring.hw10react.dto.book.BookDTO;
 import com.otus.spring.hw10react.dto.book.FindAuthorsResponseDTO;
 import com.otus.spring.hw10react.dto.book.FindBooksResponseDTO;
+import com.otus.spring.hw10react.dto.book.FindCommentsResponseDTO;
 import com.otus.spring.hw10react.dto.comment.CommentDTO;
+import com.otus.spring.hw10react.dto.genre.FindGenresResponseDTO;
 import com.otus.spring.hw10react.dto.genre.GenreDTO;
 import org.mapstruct.Mapper;
 
@@ -41,6 +43,18 @@ public interface MappingService {
 
     List<AuthorDTO> mapAuthorsToDtos(Set<Author> authors);
 
+    default FindAuthorsResponseDTO mapAuthorsToResponse(Set<Author> authors) {
+        return FindAuthorsResponseDTO.builder()
+                .authors(mapAuthorsToDtos(authors))
+                .build();
+    }
+
+    default FindAuthorsResponseDTO mapAuthorsToResponse(List<Author> authors) {
+        return FindAuthorsResponseDTO.builder()
+                .authors(mapAuthorsToDtos(authors))
+                .build();
+    }
+
     default List<BookDTO> mapBooksToDtos(List<Book> books) {
         return ofNullable(books).orElse(emptyList()).stream()
                 .map(book -> BookDTO.builder()
@@ -52,9 +66,21 @@ public interface MappingService {
                 .collect(Collectors.toList());
     }
 
+    default FindBooksResponseDTO mapBooksToResponse(List<Book> books) {
+        return FindBooksResponseDTO.builder()
+                .books(mapBooksToDtos(books))
+                .build();
+    }
+
     List<CommentDTO> mapCommentsToDtos(List<Comment> comments);
 
     Set<CommentDTO> mapCommentsToDtos(Set<Comment> comments);
+
+    default FindCommentsResponseDTO mapCommentsToResponse(Set<Comment> comments) {
+        return FindCommentsResponseDTO.builder()
+                .comments(mapCommentsToDtos(comments))
+                .build();
+    }
 
     Set<Author> mapDtosToAuthors(Set<AuthorDTO> authors);
 
@@ -62,21 +88,9 @@ public interface MappingService {
 
     List<GenreDTO> mapGenresToDtos(List<Genre> genres);
 
-    default FindBooksResponseDTO mapBooksToResponse(List<Book> books) {
-        return FindBooksResponseDTO.builder()
-                .books(mapBooksToDtos(books))
-                .build();
-    }
-
-    default FindAuthorsResponseDTO mapGenresToResponse(Set<Author> authors) {
-        return FindAuthorsResponseDTO.builder()
-                .authors(mapAuthorsToDtos(authors))
-                .build();
-    }
-
-    default FindAuthorsResponseDTO mapGenresToResponse(List<Author> authors) {
-        return FindAuthorsResponseDTO.builder()
-                .authors(mapAuthorsToDtos(authors))
+    default FindGenresResponseDTO mapGenresToResponse(List<Genre> genres) {
+        return FindGenresResponseDTO.builder()
+                .genres(mapGenresToDtos(genres))
                 .build();
     }
 }

@@ -1,4 +1,4 @@
-package com.otus.spring.hw10react.controller;
+package com.otus.spring.hw10react.rest.controller;
 
 import com.otus.spring.hw10react.dto.genre.FindGenresResponseDTO;
 import com.otus.spring.hw10react.service.GenreService;

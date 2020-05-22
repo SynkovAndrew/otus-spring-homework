@@ -13,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 import static java.util.Optional.ofNullable;
 
 @Service
@@ -79,6 +77,13 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
+    public BookDTO find(final int bookId) throws BookNotFoundException {
+        return bookRepository.findById(bookId)
+                .map(mappingService::map)
+                .orElseThrow(() -> new BookNotFoundException(bookId));
+    }
+
+    @Transactional(readOnly = true)
     public FindBooksResponseDTO findAll() {
         return mappingService.mapBooksToResponse(bookRepository.findAll());
     }
@@ -91,13 +96,6 @@ public class BookService {
     @Transactional(readOnly = true)
     public FindBooksResponseDTO findByGenre(final int genreId) {
         return mappingService.mapBooksToResponse(bookRepository.findByGenreId(genreId));
-    }
-
-    @Transactional(readOnly = true)
-    public BookDTO findOne(final int bookId) throws BookNotFoundException {
-        return bookRepository.findById(bookId)
-                .map(mappingService::map)
-                .orElseThrow(() -> new BookNotFoundException(bookId));
     }
 
     @Transactional

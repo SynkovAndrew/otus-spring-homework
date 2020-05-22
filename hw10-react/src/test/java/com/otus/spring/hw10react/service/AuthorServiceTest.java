@@ -4,7 +4,9 @@ package com.otus.spring.hw10react.service;
 import com.otus.spring.hw10react.dto.author.AuthorDTO;
 import com.otus.spring.hw10react.dto.author.CreateOrUpdateAuthorRequestDTO;
 import com.otus.spring.hw10react.dto.book.FindAuthorsRequestDTO;
+import com.otus.spring.hw10react.exception.AuthorNotFoundException;
 import com.otus.spring.hw10react.repository.AuthorRepository;
+import com.otus.spring.hw10react.repository.BookRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,21 +15,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 public class AuthorServiceTest {
     @Autowired
     private AuthorRepository authorRepository;
+    @Autowired
+    private BookRepository bookRepository;
     private AuthorService service;
 
     @Test
     @DisplayName("Find absent author by id")
     public void findAbsentByIdTest() {
-        final Optional<AuthorDTO> author = service.findOne(112);
-        assertThat(author).isNotPresent();
+        assertThrows(AuthorNotFoundException.class, () -> service.find(123));
     }
 
     @Test
@@ -42,11 +45,11 @@ public class AuthorServiceTest {
 
     @Test
     @DisplayName("Find author by id")
-    public void findByIdTest() {
-        final Optional<AuthorDTO> author = service.findOne(3);
-        assertThat(author).isPresent();
-        assertThat(author).get().extracting(AuthorDTO::getId).isEqualTo(3);
-        assertThat(author).get().extracting(AuthorDTO::getName).isEqualTo("George Orwell");
+    public void findByIdTest() throws AuthorNotFoundException {
+        final AuthorDTO author = service.find(3);
+        assertThat(author).isNotNull();
+        assertThat(author).extracting(AuthorDTO::getId).isEqualTo(3);
+        assertThat(author).extracting(AuthorDTO::getName).isEqualTo("George Orwell");
     }
 
     @Test
@@ -54,7 +57,7 @@ public class AuthorServiceTest {
     public void saveTest() {
         final var author = CreateOrUpdateAuthorRequestDTO.builder().name("Lev Tolstoy").build();
         final var response = service.createOrUpdate(author);
-        assertThat(response).isPresent();
+        assertThat(response).isNotNull();
         final List<AuthorDTO> all = service.findAll(FindAuthorsRequestDTO.builder().build()).getAuthors();
         assertThat(all).size().isEqualTo(5);
         assertThat(all).extracting(AuthorDTO::getId).isNotNull();
@@ -63,15 +66,19 @@ public class AuthorServiceTest {
 
     @BeforeEach
     public void setUp() {
-        service = new AuthorService(authorRepository, Mappers.getMapper(MappingService.class));
+        service = new AuthorService(authorRepository, bookRepository, Mappers.getMapper(MappingService.class));
     }
 
     @Test
     @DisplayName("Update absent author")
     public void updateAbsentTest() {
-        final var response = service.createOrUpdate(
-                CreateOrUpdateAuthorRequestDTO.builder().name("Nikolai Michailowitsch Karamsin").id(111).build());
-        assertThat(response).isNotPresent();
+        final var result = service.createOrUpdate(
+                CreateOrUpdateAuthorRequestDTO.builder()
+                        .name("Nikolai Michailowitsch Karamsin")
+                        .id(111)
+                        .build()
+        );
+        assertThat(result).isNotNull();
         final List<AuthorDTO> all = service.findAll(FindAuthorsRequestDTO.builder().build()).getAuthors();
         assertThat(all).size().isEqualTo(4);
         assertThat(all).extracting(AuthorDTO::getName)
@@ -80,13 +87,13 @@ public class AuthorServiceTest {
 
     @Test
     @DisplayName("Update author")
-    public void updateTest() {
+    public void updateTest() throws AuthorNotFoundException {
         final var response = service.createOrUpdate(
                 CreateOrUpdateAuthorRequestDTO.builder().name("Nikolai Michailowitsch Karamsin").id(1).build());
-        assertThat(response).isPresent();
-        final Optional<AuthorDTO> author = service.findOne(1);
-        assertThat(author).isPresent();
-        assertThat(author).get().extracting(AuthorDTO::getId).isEqualTo(1);
-        assertThat(author).get().extracting(AuthorDTO::getName).isEqualTo("Nikolai Michailowitsch Karamsin");
+        assertThat(response).isNotNull();
+        final AuthorDTO author = service.find(1);
+        assertThat(author).isNotNull();
+        assertThat(author).extracting(AuthorDTO::getId).isEqualTo(1);
+        assertThat(author).extracting(AuthorDTO::getName).isEqualTo("Nikolai Michailowitsch Karamsin");
     }
 }
