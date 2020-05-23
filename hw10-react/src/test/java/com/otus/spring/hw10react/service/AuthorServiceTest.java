@@ -69,21 +69,6 @@ public class AuthorServiceTest {
         service = new AuthorService(authorRepository, bookRepository, Mappers.getMapper(MappingService.class));
     }
 
-    @Test
-    @DisplayName("Update absent author")
-    public void updateAbsentTest() {
-        final var result = service.createOrUpdate(
-                CreateOrUpdateAuthorRequestDTO.builder()
-                        .name("Nikolai Michailowitsch Karamsin")
-                        .id(111)
-                        .build()
-        );
-        assertThat(result).isNotNull();
-        final List<AuthorDTO> all = service.findAll(FindAuthorsRequestDTO.builder().build()).getAuthors();
-        assertThat(all).size().isEqualTo(4);
-        assertThat(all).extracting(AuthorDTO::getName)
-                .doesNotContain("Nikolai Michailowitsch Karamsin");
-    }
 
     @Test
     @DisplayName("Update author")

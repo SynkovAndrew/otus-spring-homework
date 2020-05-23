@@ -63,16 +63,6 @@ public class GenreServiceTest {
         service = new GenreService(repository, Mappers.getMapper(MappingService.class));
     }
 
-    @Test
-    @DisplayName("Update absent genre")
-    public void updateAbsentTest() {
-        assertThrows(GenreNotFoundException.class, () -> service.createOrUpdate(
-                CreateOrUpdateGenreRequestDTO.builder().name("Non Fiction").id(222).build()));
-
-        final List<GenreDTO> all = service.findAll().getGenres();
-        assertThat(all).size().isEqualTo(6);
-        assertThat(all).extracting(GenreDTO::getName).doesNotContain("Non Fiction");
-    }
 
     @Test
     @DisplayName("Update genre")

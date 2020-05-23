@@ -57,7 +57,7 @@ public class BookController {
     }
 
     @DeleteMapping("/api/v1/book/{bookId}")
-    public BookDTO update(final @PathVariable("bookId") int bookId) throws BookNotFoundException {
+    public BookDTO delete(final @PathVariable("bookId") int bookId) throws BookNotFoundException {
         return bookService.delete(bookId);
     }
 }
