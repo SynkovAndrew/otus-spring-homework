@@ -4,17 +4,14 @@ import com.otus.spring.hw10react.dto.book.FindAuthorsRequestDTO;
 import com.otus.spring.hw10react.dto.book.FindAuthorsResponseDTO;
 import com.otus.spring.hw10react.service.AuthorService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 public class AuthorController {
     private final AuthorService authorService;
 
-    @GetMapping("/api/v1/authors")
+    @PostMapping("/api/v1/authors")
     public FindAuthorsResponseDTO findAll(final @RequestBody FindAuthorsRequestDTO request) {
         return authorService.findAll(request);
     }
