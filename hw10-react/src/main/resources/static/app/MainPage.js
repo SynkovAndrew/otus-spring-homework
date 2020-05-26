@@ -12,13 +12,22 @@ export default class MainPage extends React.Component {
         return (
             <HashRouter>
                 <div>
-                    <h1>Simple SPA</h1>
-                    <ul className="header">
-                        <li><NavLink to="/">Books</NavLink></li>
-                        <li><NavLink to="/authors">Authors</NavLink></li>
-                        <li><NavLink to="/genres">Genres</NavLink></li>
-                    </ul>
-                    <div className="content">
+                    <nav className="navbar navbar-expand-lg navbar-dark bg-dark ">
+                        <div className="collapse navbar-collapse" id="navbarNav">
+                            <ul className="navbar-nav header-menu">
+                                <li className="nav-item">
+                                    <NavLink className="nav-link" to="/">Books</NavLink>
+                                </li>
+                                <li className="nav-item">
+                                    <NavLink className="nav-link" to="/authors">Authors</NavLink>
+                                </li>
+                                <li className="nav-item">
+                                    <NavLink className="nav-link" to="/genres">Genres</NavLink>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                    <div className="content main-div">
                         <Route exact path="/" component={BooksPage}/>
                         <Route path="/authors" component={AuthorsPage}/>
                         <Route path="/genres" component={GenresPage}/>

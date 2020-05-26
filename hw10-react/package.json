@@ -5,6 +5,7 @@
   "main": "src/main/resources/static/index.js",
   "scripts": {
     "dev": "webpack-dev-server --content-base app/",
+    "watch": "webpack --watch",
     "build": "webpack -d"
   },
   "author": "",
