@@ -1,8 +1,11 @@
 import React from 'react'
 import './styles.css'
 import 'bootstrap/dist/css/bootstrap.css';
-import {HashRouter, NavLink} from "react-router-dom";
+import {HashRouter, NavLink, Route} from "react-router-dom";
 import {DeleteBookButton} from "./DeleteBookButton";
+import AuthorsPage from "./AuthorsPage";
+import GenresPage from "./GenresPage";
+import BookDetailsPage from "./BookDetailsPage";
 
 export default class BooksPage extends React.Component {
     constructor(props) {
@@ -64,6 +67,10 @@ export default class BooksPage extends React.Component {
                             }
                             </tbody>
                         </table>
+                    </div>
+                    <div className="content main-div">
+                        <Route exact path="/book/:bookId" component={BookDetailsPage}/>
+                        <Route exact path="/book/:bookId/comments" component={BookDetailsPage}/>
                     </div>
                 </HashRouter>
             </React.Fragment>
