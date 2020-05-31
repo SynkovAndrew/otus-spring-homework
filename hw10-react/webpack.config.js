@@ -9,7 +9,7 @@ module.exports = {
         filename: './src/main/resources/static/output/bundle.js'
     },
     module: {
-        loaders: [
+        "loaders": [
             {
                 test: /\.js$/,
                 exclude: /(node_modules|bower_components|build)/,
