@@ -1,7 +1,7 @@
 import React from 'react'
 import './styles.css'
 import 'bootstrap/dist/css/bootstrap.css';
-import {NavLink, Route} from "react-router-dom";
+import {NavLink} from "react-router-dom";
 import {DeleteBookButton} from "./DeleteBookButton";
 
 export default class BooksPage extends React.Component {
