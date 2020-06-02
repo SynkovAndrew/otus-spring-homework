@@ -160,8 +160,8 @@ export default class BookDetailsPage extends React.Component {
                             }
                         </select>
                     </div>
-                    <button className="btn btn-primary button-margin" onClick={this.updateBook}>Save</button>
-                    <button className="btn btn-secondary button-margin" onClick={this.goToBooksPage}>Back</button>
+                    <button className="btn btn-primary margin-5" onClick={this.updateBook}>Save</button>
+                    <button className="btn btn-secondary margin-5" onClick={this.goToBooksPage}>Back</button>
                 </div>
             </React.Fragment>
         )
