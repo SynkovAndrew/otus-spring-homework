@@ -11,24 +11,19 @@ export default class BookCommentsPage extends React.Component {
             comments: [],
             comment: ""
         };
-
-        this.reloadComments = this.reloadComments.bind(this);
-        this.addComment = this.addComment.bind(this);
-        this.onCommentChange = this.onCommentChange.bind(this);
-        this.goToBookDetailsPage = this.goToBookDetailsPage.bind(this);
     }
 
     componentDidMount() {
         this.reloadComments();
     }
 
-    onCommentChange(event) {
+    onCommentChange = (event) => {
         this.setState({
             comment: event.target.value
         });
     }
 
-    reloadComments() {
+    reloadComments = () => {
         const bookId = this.props.match.params.bookId;
 
         fetch('/api/v1/book/' + bookId + '/comments')
@@ -36,12 +31,12 @@ export default class BookCommentsPage extends React.Component {
             .then(json => this.setState({comments: json.comments}));
     }
 
-    goToBookDetailsPage() {
+    goToBookDetailsPage = () => {
         const {history} = this.props;
         history.push('/')
     }
 
-    addComment() {
+    addComment = () => {
         const comment = this.state.comment;
         if (comment !== null && comment !== "") {
             fetch('/api/v1/comment', {

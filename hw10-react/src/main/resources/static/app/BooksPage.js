@@ -10,14 +10,13 @@ export default class BooksPage extends React.Component {
         this.state = {
             books: []
         };
-        this.reloadBooks = this.reloadBooks.bind(this);
     }
 
     componentDidMount() {
         this.reloadBooks();
     }
 
-    reloadBooks() {
+    reloadBooks = () => {
         fetch('/api/v1/books')
             .then(response => response.json())
             .then(json => this.setState({books: json.books}));

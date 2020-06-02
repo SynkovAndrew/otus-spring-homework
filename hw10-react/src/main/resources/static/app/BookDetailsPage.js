@@ -14,16 +14,9 @@ export default class BookDetailsPage extends React.Component {
                 authors: []
             }
         };
-
-        this.updateBook = this.updateBook.bind(this);
-        this.goToBooksPage = this.goToBooksPage.bind(this);
-        this.onNameChange = this.onNameChange.bind(this);
-        this.onYearChange = this.onYearChange.bind(this);
-        this.onGenreChange = this.onGenreChange.bind(this);
-        this.onAuthorChange = this.onAuthorChange.bind(this);
     }
 
-    onNameChange(event) {
+    onNameChange = (event) => {
         this.setState({
             book: {
                 ...this.state.book,
@@ -32,7 +25,7 @@ export default class BookDetailsPage extends React.Component {
         });
     }
 
-    onYearChange(event) {
+    onYearChange = (event) => {
         this.setState({
             book: {
                 ...this.state.book,
@@ -41,7 +34,7 @@ export default class BookDetailsPage extends React.Component {
         });
     }
 
-    onGenreChange(event) {
+    onGenreChange = (event) => {
         this.setState({
             book: {
                 ...this.state.book,
@@ -53,7 +46,7 @@ export default class BookDetailsPage extends React.Component {
         });
     }
 
-    onAuthorChange(event) {
+    onAuthorChange = (event) => {
         const options = event.target.options;
         const selectedAuthors = [];
         const authors = this.state.authors;
@@ -75,12 +68,12 @@ export default class BookDetailsPage extends React.Component {
         });
     }
 
-    goToBooksPage() {
+    goToBooksPage = () => {
         const {history} = this.props;
         history.push('/')
     }
 
-    updateBook() {
+    updateBook = () => {
         fetch('/api/v1/book/' + this.props.match.params.bookId, {
             method: "PUT",
             headers: {

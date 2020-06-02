@@ -3,11 +3,9 @@ import React, {Component} from 'react'
 export class DeleteCommentButton extends Component {
     constructor(props) {
         super(props);
-
-        this.deleteComment = this.deleteComment.bind(this);
     }
 
-    deleteComment() {
+    deleteComment = () => {
         fetch('/api/v1/comment', {
             method: "DELETE",
             body: JSON.stringify({commentId: this.props.commentId}),

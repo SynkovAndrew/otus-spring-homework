@@ -11,7 +11,6 @@ export default class AuthorsPage extends React.Component {
     }
 
     componentDidMount() {
-
         fetch("/api/v1/authors")
             .then(response => response.json())
             .then(json => this.setState({authors: json.authors}));

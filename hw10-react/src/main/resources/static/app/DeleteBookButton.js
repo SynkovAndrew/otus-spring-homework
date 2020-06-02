@@ -3,11 +3,9 @@ import React, {Component} from 'react'
 export class DeleteBookButton extends Component {
     constructor(props) {
         super(props);
-
-        this.deleteBook = this.deleteBook.bind(this);
     }
 
-    deleteBook() {
+    deleteBook = () => {
         fetch('/api/v1/book/' + this.props.bookId, {method: "DELETE"})
             .then(response => response.json())
             .then(json => this.props.reloadBooks())

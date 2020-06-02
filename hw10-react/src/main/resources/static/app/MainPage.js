@@ -9,7 +9,6 @@ import BookDetailsPage from "./BookDetailsPage";
 import BookCommentsPage from "./BookCommentsPage";
 
 export default class MainPage extends React.Component {
-
     render() {
         return (
             <HashRouter>
