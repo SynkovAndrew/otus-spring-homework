@@ -13,8 +13,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.Set;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.*;
 
 @SpringBootTest
 @AutoConfigureWebTestClient
@@ -29,7 +28,35 @@ public class BookRequestsTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(FindBooksResponseDTO.class)
-                .value(response -> response.getBooks().size(), equalTo(7));
+                .value(response -> response.getBooks().size(), equalTo(7))
+                .value(FindBooksResponseDTO::getBooks, hasItems(
+                        BookDTO.builder()
+                                .id("1")
+                                .genre(GenreDTO.builder()
+                                        .id("6")
+                                        .name("Fiction")
+                                        .build())
+                                .name("The Night in Lisbon")
+                                .year(1964)
+                                .authors(Set.of(AuthorDTO.builder()
+                                        .id("1")
+                                        .name("Erich Maria Remarque")
+                                        .build()))
+                                .build(),
+                        BookDTO.builder()
+                                .id("2")
+                                .genre(GenreDTO.builder()
+                                        .id("6")
+                                        .name("Fiction")
+                                        .build())
+                                .name("The Black Obelisk")
+                                .year(1957)
+                                .authors(Set.of(AuthorDTO.builder()
+                                        .id("1")
+                                        .name("Erich Maria Remarque")
+                                        .build()))
+                                .build()
+                ));
     }
 
     @Test

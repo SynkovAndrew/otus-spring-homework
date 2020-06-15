@@ -2,6 +2,7 @@ package com.otus.spring.hw11webflux.service;
 
 import com.otus.spring.hw11webflux.domain.Book;
 import com.otus.spring.hw11webflux.dto.book.BookDTO;
+import com.otus.spring.hw11webflux.dto.book.FindAuthorsResponseDTO;
 import com.otus.spring.hw11webflux.dto.book.FindBooksResponseDTO;
 import com.otus.spring.hw11webflux.repository.AuthorRepository;
 import com.otus.spring.hw11webflux.repository.BookRepository;
@@ -32,7 +33,13 @@ public class BookService {
                 .flatMap(this::enrich);
     }
 
-
+    /*    @Transactional(readOnly = true)*/
+    public Mono<FindBooksResponseDTO> findAll() {
+        return bookRepository.findAll()
+                .flatMap(this::enrich)
+                .collectList()
+                .map(mappingService::mapBookDtosToResponse);
+    }
 
 
    /* private final AuthorRepository authorRepository;
@@ -104,10 +111,4 @@ public class BookService {
                 .map(mappingService::map);
     }*/
 
-    /*    @Transactional(readOnly = true)*/
-    public Mono<FindBooksResponseDTO> findAll() {
-        return bookRepository.findAll()
-                .collectList()
-                .map(mappingService::mapBooksToResponse);
-    }
 }

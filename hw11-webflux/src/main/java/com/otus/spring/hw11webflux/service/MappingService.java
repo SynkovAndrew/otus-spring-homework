@@ -93,6 +93,12 @@ public interface MappingService {
                 .build();
     }
 
+    default FindBooksResponseDTO mapBookDtosToResponse(List<BookDTO> books) {
+        return FindBooksResponseDTO.builder()
+                .books(books)
+                .build();
+    }
+
     List<CommentDTO> mapCommentsToDtos(List<Comment> comments);
 
     Set<CommentDTO> mapCommentsToDtos(Set<Comment> comments);
