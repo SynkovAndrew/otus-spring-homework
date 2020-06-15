@@ -5,10 +5,7 @@ import com.otus.spring.hw11webflux.domain.Book;
 import com.otus.spring.hw11webflux.domain.Comment;
 import com.otus.spring.hw11webflux.domain.Genre;
 import com.otus.spring.hw11webflux.dto.author.AuthorDTO;
-import com.otus.spring.hw11webflux.dto.book.BookDTO;
-import com.otus.spring.hw11webflux.dto.book.FindAuthorsResponseDTO;
-import com.otus.spring.hw11webflux.dto.book.FindBooksResponseDTO;
-import com.otus.spring.hw11webflux.dto.book.FindCommentsResponseDTO;
+import com.otus.spring.hw11webflux.dto.book.*;
 import com.otus.spring.hw11webflux.dto.comment.CommentDTO;
 import com.otus.spring.hw11webflux.dto.genre.FindGenresResponseDTO;
 import com.otus.spring.hw11webflux.dto.genre.GenreDTO;
@@ -27,6 +24,15 @@ public interface MappingService {
     AuthorDTO map(Author author);
 
     Author map(AuthorDTO author);
+
+    default Book map(CreateOrUpdateBookRequestDTO request) {
+        return Book.builder()
+                .authors(request.getAuthorIds())
+                .genre(request.getGenreId())
+                .name(request.getName())
+                .year(request.getYear())
+                .build();
+    }
 
     default BookDTO map(Book book, final Genre genre, final List<Author> authors) {
         return BookDTO.builder()

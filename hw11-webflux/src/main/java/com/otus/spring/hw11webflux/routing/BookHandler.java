@@ -1,6 +1,7 @@
 package com.otus.spring.hw11webflux.routing;
 
 import com.otus.spring.hw11webflux.dto.book.BookDTO;
+import com.otus.spring.hw11webflux.dto.book.CreateOrUpdateBookRequestDTO;
 import com.otus.spring.hw11webflux.dto.book.FindBooksResponseDTO;
 import com.otus.spring.hw11webflux.service.BookService;
 import lombok.RequiredArgsConstructor;
@@ -22,5 +23,19 @@ public class BookHandler {
 
     public Mono<ServerResponse> findOne(ServerRequest request) {
         return okResponse(bookService.find(request.pathVariable("bookId")), BookDTO.class);
+    }
+
+    public Mono<ServerResponse> create(ServerRequest request) {
+        return okResponse(bookService.create(request.bodyToMono(CreateOrUpdateBookRequestDTO.class)), BookDTO.class);
+    }
+
+    public Mono<ServerResponse> update(ServerRequest request) {
+        return okResponse(
+                bookService.update(
+                        request.pathVariable("bookId"),
+                        request.bodyToMono(CreateOrUpdateBookRequestDTO.class)
+                ),
+                BookDTO.class
+        );
     }
 }

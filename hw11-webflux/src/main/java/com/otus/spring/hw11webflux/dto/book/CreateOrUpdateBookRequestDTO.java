@@ -13,8 +13,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateOrUpdateBookRequestDTO {
-    private Set<Integer> authorIds;
-    private Integer genreId;
+    private Set<String> authorIds;
+    private String genreId;
     private String name;
     private Integer year;
 }
