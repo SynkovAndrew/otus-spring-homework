@@ -25,6 +25,10 @@ public class BookService {
                 .flatMap(this::enrich));
     }
 
+    public Mono<Void> delete(final String bookId) {
+        return bookRepository.deleteById(bookId);
+    }
+
     private Mono<BookDTO> enrich(final Book book) {
         return Mono.zip(
                 genreRepository.findById(book.getGenre()),

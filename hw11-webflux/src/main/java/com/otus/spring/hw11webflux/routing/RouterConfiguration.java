@@ -27,6 +27,9 @@ public class RouterConfiguration {
         return route()
                 .GET("/api/v1/books", accept(APPLICATION_JSON), bookHandler::findAll)
                 .GET("/api/v1/book/{bookId}", accept(APPLICATION_JSON), bookHandler::findOne)
+                .POST("/api/v1/book", accept(APPLICATION_JSON), bookHandler::create)
+                .PUT("/api/v1/book/{bookId}", accept(APPLICATION_JSON), bookHandler::update)
+                .DELETE("/api/v1/book/{bookId}", accept(APPLICATION_JSON), bookHandler::delete)
                 .build();
     }
 

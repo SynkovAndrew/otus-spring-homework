@@ -29,6 +29,10 @@ public class BookHandler {
         return okResponse(bookService.create(request.bodyToMono(CreateOrUpdateBookRequestDTO.class)), BookDTO.class);
     }
 
+    public Mono<ServerResponse> delete(ServerRequest request) {
+        return okResponse(bookService.delete(request.pathVariable("bookId")), Void.class);
+    }
+
     public Mono<ServerResponse> update(ServerRequest request) {
         return okResponse(
                 bookService.update(
