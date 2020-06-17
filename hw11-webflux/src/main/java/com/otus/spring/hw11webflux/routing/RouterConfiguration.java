@@ -18,6 +18,7 @@ public class RouterConfiguration {
     public RouterFunction<ServerResponse> composedAuthorRoutes(AuthorHandler authorHandler) {
         return route()
                 .GET("/api/v1/authors", accept(APPLICATION_JSON), authorHandler::findAll)
+                .GET("/api/v1/book/{bookId}/authors", accept(APPLICATION_JSON), authorHandler::findBookAuthors)
                 .GET("/api/v1/author/{authorId}", accept(APPLICATION_JSON), authorHandler::findOne)
                 .build();
     }

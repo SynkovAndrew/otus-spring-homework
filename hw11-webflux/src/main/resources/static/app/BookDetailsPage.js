@@ -53,9 +53,10 @@ export default class BookDetailsPage extends React.Component {
 
         for (let i = 0, l = options.length; i < l; i++) {
             if (options[i].selected) {
-                let found = authors.find(author => author.id === parseInt(options[i].value));
+                let found = authors.find(author => author.id === options[i].value);
                 if (found !== undefined) {
                     selectedAuthors.push(found);
+                    console.log(1)
                 }
             }
         }
@@ -142,7 +143,7 @@ export default class BookDetailsPage extends React.Component {
                         <label htmlFor="genre">Authors:</label>
                         <select multiple={true}
                                 value={
-                                    this.state.book.authors.map(a => a.id)
+                                    this.state.book.authors.map(a => parseInt(a.id))
                                 }
                                 onChange={this.onAuthorChange}
                                 className="custom-select">
