@@ -109,7 +109,7 @@ public interface MappingService {
 
     Set<CommentDTO> mapCommentsToDtos(Set<Comment> comments);
 
-    default FindCommentsResponseDTO mapCommentsToResponse(Set<Comment> comments) {
+    default FindCommentsResponseDTO mapCommentsToResponse(List<Comment> comments) {
         return FindCommentsResponseDTO.builder()
                 .comments(mapCommentsToDtos(comments))
                 .build();

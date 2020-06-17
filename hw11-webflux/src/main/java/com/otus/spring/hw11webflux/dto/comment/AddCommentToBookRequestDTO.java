@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddCommentToBookRequestDTO {
-    private Integer bookId;
+    private String bookId;
     private String comment;
 }

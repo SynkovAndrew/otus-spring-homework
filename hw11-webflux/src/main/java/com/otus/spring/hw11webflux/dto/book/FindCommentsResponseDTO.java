@@ -6,12 +6,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class FindCommentsResponseDTO {
-    private Set<CommentDTO> comments;
+    private List<CommentDTO> comments;
 }
