@@ -35,6 +35,15 @@ public class RouterConfiguration {
     }
 
     @Bean
+    public RouterFunction<ServerResponse> composedCommentRoutes(CommentHandler commentHandler) {
+        return route()
+                .GET("/api/v1/book/{bookId}/comments", accept(APPLICATION_JSON), commentHandler::findBookAuthors)
+                .POST("/api/v1/comment", accept(APPLICATION_JSON), commentHandler::add)
+                .DELETE("/api/v1/comment", accept(APPLICATION_JSON), commentHandler::remove)
+                .build();
+    }
+
+    @Bean
     public RouterFunction<ServerResponse> composedGenreRoutes(GenreHandler genreHandler) {
         return route()
                 .GET("/api/v1/genres", accept(APPLICATION_JSON), genreHandler::findAll)

@@ -78,6 +78,7 @@ export default class BookCommentsPage extends React.Component {
                                     <td>
                                         <DeleteCommentButton
                                             commentId={comment.id}
+                                            bookId={this.props.match.params.bookId}
                                             reloadComments={this.reloadComments}/>
                                     </td>
                                 </tr>

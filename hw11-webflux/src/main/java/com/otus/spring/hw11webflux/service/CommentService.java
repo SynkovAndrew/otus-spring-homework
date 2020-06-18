@@ -13,11 +13,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Optional;
-
-import static java.util.Collections.emptySet;
-import static java.util.Optional.ofNullable;
-
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -55,15 +50,13 @@ public class CommentService {
     }
 
     /*@Transactional*/
-    public Optional<CommentDTO> remove(final RemoveCommentFromBookRequestDTO request) {
-        return bookRepository.findById(request.getBookId())
-                .flatMap(book -> ofNullable(book.getComments()).orElse(emptySet()).stream()
-                        .filter(c -> c.getId().equals(request.getCommentId()))
-                        .findFirst()
-                        .map(found -> {
-                            book.getComments().remove(found);
-                            bookRepository.save(book);
-                            return mappingService.map(found);
-                        }));
+    public Mono<Void> remove(final Mono<RemoveCommentFromBookRequestDTO> request) {
+        return request.flatMap(req -> Mono.zip(
+                bookRepository.findById(req.getBookId()),
+                commentRepository.deleteById(req.getCommentId())
+        ).map(tuple -> {
+            tuple.getT1().getComments().remove(req.getCommentId());
+            return tuple.getT2();
+        }));
     }
 }

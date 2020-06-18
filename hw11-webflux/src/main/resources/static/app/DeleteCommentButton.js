@@ -8,13 +8,15 @@ export class DeleteCommentButton extends Component {
     deleteComment = () => {
         fetch('/api/v1/comment', {
             method: "DELETE",
-            body: JSON.stringify({commentId: this.props.commentId}),
+            body: JSON.stringify({
+                commentId: this.props.commentId,
+                bookId: this.props.bookId
+            }),
             headers : {
                 'Content-Type': 'application/json'
             }
         })
-            .then(response => response.json())
-            .then(json => this.props.reloadComments())
+            .then(response => this.props.reloadComments())
     }
 
     render() {
