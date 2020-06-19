@@ -13,13 +13,11 @@ public class GenreService {
     private final GenreRepository genreRepository;
     private final MappingService mappingService;
 
-    /*    @Transactional(readOnly = true)*/
     public Mono<GenreDTO> find(final String genreId) {
         return genreRepository.findById(genreId)
                 .map(mappingService::map);
     }
 
-    /*    @Transactional(readOnly = true)*/
     public Mono<FindGenresResponseDTO> findAll() {
         return genreRepository.findAll()
                 .collectList()

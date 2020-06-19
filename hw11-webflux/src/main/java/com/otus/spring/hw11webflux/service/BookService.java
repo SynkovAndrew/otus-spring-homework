@@ -19,7 +19,6 @@ public class BookService {
     private final GenreRepository genreRepository;
     private final MappingService mappingService;
 
-    /*    @Transactional*/
     public Mono<BookDTO> create(final Mono<CreateOrUpdateBookRequestDTO> request) {
         return request.flatMap(req -> bookRepository.save(mappingService.map(req))
                 .flatMap(this::enrich));
@@ -37,13 +36,11 @@ public class BookService {
                 .map(joined -> mappingService.map(book, joined.getT1(), joined.getT2()));
     }
 
-    /*    @Transactional(readOnly = true)*/
     public Mono<BookDTO> find(final String bookId) {
         return bookRepository.findById(bookId)
                 .flatMap(this::enrich);
     }
 
-    /*    @Transactional(readOnly = true)*/
     public Mono<FindBooksResponseDTO> findAll() {
         return bookRepository.findAll()
                 .flatMap(this::enrich)
@@ -51,7 +48,6 @@ public class BookService {
                 .map(mappingService::mapBookDtosToResponse);
     }
 
-    /*    @Transactional*/
     public Mono<BookDTO> update(final String bookId, final Mono<CreateOrUpdateBookRequestDTO> request) {
         return request.flatMap(req -> bookRepository.findById(bookId)
                 .flatMap(book -> {

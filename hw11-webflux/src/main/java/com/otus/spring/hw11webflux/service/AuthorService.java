@@ -19,21 +19,17 @@ public class AuthorService {
     private final BookRepository bookRepository;
     private final MappingService mappingService;
 
-    /*    @Transactional(readOnly = true)*/
     public Mono<AuthorDTO> find(final String authorId) {
         return authorRepository.findById(authorId)
                 .map(mappingService::map);
     }
 
-    /*    @Transactional(readOnly = true)*/
     public Mono<FindAuthorsResponseDTO> findAll() {
         return authorRepository.findAll()
                 .collectList()
                 .map(mappingService::mapAuthorsToResponse);
     }
 
-    /*
-        @Transactional(readOnly = true)*/
     public Mono<FindAuthorsResponseDTO> findBookAuthors(final String bookId) {
         return bookRepository.findById(bookId)
                 .map(book -> authorRepository.findAllByIdIn(book.getAuthors()))

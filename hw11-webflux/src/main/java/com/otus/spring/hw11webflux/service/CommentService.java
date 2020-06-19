@@ -20,7 +20,6 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final MappingService mappingService;
 
-    /*    @Transactional*/
     public Mono<CommentDTO> add(final Mono<AddCommentToBookRequestDTO> request) {
         return request.flatMap(req -> bookRepository.findById(req.getBookId())
                 .flatMap(book -> commentRepository.save(
@@ -29,19 +28,17 @@ public class CommentService {
                                 .build())
                         .map(comment -> {
                             book.getComments().add(comment.getId());
-                            bookRepository.save(book);
+                            bookRepository.save(book).subscribe();
                             return comment;
                         })))
                 .map(mappingService::map);
     }
 
-    /*    @Transactional(readOnly = true)*/
     public Mono<CommentDTO> find(final String commentId) {
         return commentRepository.findById(commentId)
                 .map(mappingService::map);
     }
 
-    /* @Transactional(readOnly = true)*/
     public Mono<FindCommentsResponseDTO> findAllByBookId(final String bookId) {
         return bookRepository.findById(bookId)
                 .map(book -> commentRepository.findByIdIn(book.getComments()))
@@ -49,7 +46,6 @@ public class CommentService {
                 .map(mappingService::mapCommentsToResponse);
     }
 
-    /*@Transactional*/
     public Mono<Void> remove(final Mono<RemoveCommentFromBookRequestDTO> request) {
         return request.flatMap(req -> Mono.zip(
                 bookRepository.findById(req.getBookId()),

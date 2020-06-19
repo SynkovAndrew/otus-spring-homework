@@ -49,8 +49,7 @@ export default class BookCommentsPage extends React.Component {
                     'Content-Type': 'application/json'
                 }
             })
-                .then(response => response.json())
-                .then(json =>  {
+                .then(response => {
                     this.reloadComments()
                     this.setState({
                         comment: ""
