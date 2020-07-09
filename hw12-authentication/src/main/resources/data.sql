@@ -37,3 +37,11 @@ values (1, 'Interesting book. Hope everybody will enjoy it!'),
        (3, 'I dont really like it, coudnt even finish it...'),
        (5, 'I love this book. I have re-read it 3 times already!'),
        (6, 'It is difficult one but worth to read it!');
+
+insert into users (username, password, enabled)
+values ('admin', '$2y$12$d.2K6Pjr6NYE0bJxa3clFeAQDtK3L9JDzGwIdTqYnDsDfyxY42MTu', true),
+        ('guest', '$2y$12$X3p1fWZ/MCSfnFKBJxj.aeSbgJuZBWoepEMzBiwCUI7jl5rK6SIjK', true);
+
+insert into roles (username, role)
+values ('admin', 'ADMIN_ROLE'),
+        ('guest', 'GUEST_ROLE');

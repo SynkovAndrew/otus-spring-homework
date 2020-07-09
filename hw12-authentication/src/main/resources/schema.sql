@@ -33,26 +33,25 @@ create table books_authors
 
 create table comments
 (
-    id   serial primary key,
+    id serial primary key,
     book_id  integer not null references books (id),
     value varchar(1000) not null
 );
 
 create table users
 (
-    username varchar_ignorecase(50) not null primary key,
-    password varchar_ignorecase(500) not null,
+    username varchar(50) not null primary key,
+    password varchar(500) not null,
     enabled boolean not null
 );
 
 create table roles
 (
-    username varchar_ignorecase(50) not null,
-    authority varchar_ignorecase(50) not null,
+    id serial primary key,
+    username varchar(50) not null,
+    role varchar(50) not null,
     constraint fk_roles_users foreign key(username) references users(username)
 );
 
-create unique index ix_auth_username on roles (username,role);
-
-
+create unique index ix_auth_username on roles (username, role);
 
