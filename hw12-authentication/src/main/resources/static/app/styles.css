@@ -1,0 +1,27 @@
+.btn > a {
+    color: white;
+}
+
+.main-div {
+    margin-top: 3px
+}
+
+.header-menu {
+    font-size: 30px;
+}
+
+.short-column {
+    width: 1%;
+}
+
+.margin-left {
+   margin-left: 15px;
+}
+
+.details-page {
+    margin: 15px;
+}
+
+.margin-5 {
+    margin: 8px;
+}
