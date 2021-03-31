@@ -15,7 +15,7 @@
 
     <properties>
         <java.version>11</java.version>
-        <guava.version>28.2-jre</guava.version>
+        <guava.version>29.0-jre</guava.version>
         <spring.shell.version>2.0.0.RELEASE</spring.shell.version>
     </properties>
 
