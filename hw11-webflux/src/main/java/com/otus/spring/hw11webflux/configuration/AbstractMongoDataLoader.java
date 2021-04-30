@@ -39,6 +39,9 @@ public abstract class AbstractMongoDataLoader {
         final var george_orwell = Author.builder().name("George Orwell").id("3").build();
         final var sigmund_freud = Author.builder().name("Sigmund Freud").id("4").build();
 
+
+
+
         final var the_night_in_lisbon = Book.builder()
                 .id("1")
                 .genre("6")

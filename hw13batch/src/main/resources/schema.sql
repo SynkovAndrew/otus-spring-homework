@@ -10,13 +10,6 @@ create table genres
     name varchar(255) not null
 );
 
-create table books
-(
-    genre_id  integer references genres (id),
-    id        serial primary key,
-    name      varchar(255) not null,
-    year      integer
-);
 
 create table authors
 (
@@ -24,10 +17,12 @@ create table authors
     name varchar(255) not null
 );
 
-create table books_authors
+create table books
 (
-    author_id integer not null references authors (id),
-    book_id  integer not null references books (id),
-    primary key (author_id, book_id)
+    genre_id  integer references genres (id),
+    author_id  integer references authors (id),
+    id        serial primary key,
+    name      varchar(255) not null,
+    year      integer
 );
 

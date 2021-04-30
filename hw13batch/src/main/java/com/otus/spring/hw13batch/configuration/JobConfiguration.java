@@ -1,7 +1,7 @@
 package com.otus.spring.hw13batch.configuration;
 
 import com.otus.spring.hw13batch.entity.MongoDbBook;
-import com.otus.spring.hw13batch.entity.SqlDbBook;
+import com.otus.spring.hw13batch.entity.Book;
 import lombok.AllArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -39,7 +39,7 @@ public class JobConfiguration {
     @Bean
     public Step step() {
         return stepBuilderFactory.get("step")
-                .<SqlDbBook, MongoDbBook>chunk(10)
+                .<Book, MongoDbBook>chunk(10)
                 .reader(reader())
                 .processor(processor())
                 .writer(writer())
@@ -47,8 +47,8 @@ public class JobConfiguration {
     }
 
     @Bean
-    public ItemReader<SqlDbBook> reader() {
-        return new JdbcCursorItemReaderBuilder<SqlDbBook>()
+    public ItemReader<Book> reader() {
+        return new JdbcCursorItemReaderBuilder<Book>()
                 .name("bookReader")
                 .dataSource(dataSource)
                 .sql("SELECT id, genre_id, name, year FROM books")
@@ -57,7 +57,7 @@ public class JobConfiguration {
     }
 
     @Bean
-    public ItemProcessor<SqlDbBook, MongoDbBook> processor() {
+    public ItemProcessor<Book, MongoDbBook> processor() {
         return item -> new MongoDbBook(
                 null,
                 item.getId(),

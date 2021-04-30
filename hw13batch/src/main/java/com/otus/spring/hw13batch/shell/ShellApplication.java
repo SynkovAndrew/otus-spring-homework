@@ -1,7 +1,7 @@
 package com.otus.spring.hw13batch.shell;
 
 import com.otus.spring.hw13batch.entity.MongoDbBook;
-import com.otus.spring.hw13batch.entity.SqlDbBook;
+import com.otus.spring.hw13batch.entity.Book;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -28,7 +28,15 @@ public class ShellApplication {
 
     @ShellMethod(key = {"load-book-from-sql", "lbs"}, value = "load books from sql")
     public void loadBookFromSql() {
-        jdbcTemplate.query("SELECT * FROM books", BeanPropertyRowMapper.newInstance(SqlDbBook.class))
+        final String sql = "SELECT b.id as book_id," +
+                " b.name as book_name," +
+                " b.year as book_year," +
+                " g.id as genre_id," +
+                " g.name as genre_name" +
+                "FROM books b INNER JOIN genres g ON b.genre_id = g.id";
+
+
+        jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Book.class))
                 .forEach(System.out::println);
     }
 }
