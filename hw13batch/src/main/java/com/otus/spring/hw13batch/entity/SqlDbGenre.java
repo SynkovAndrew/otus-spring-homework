@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Genre {
+public class SqlDbGenre {
     private Integer id;
     private String name;
 }

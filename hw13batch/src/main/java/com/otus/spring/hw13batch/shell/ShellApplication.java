@@ -1,7 +1,7 @@
 package com.otus.spring.hw13batch.shell;
 
 import com.otus.spring.hw13batch.entity.MongoDbBook;
-import com.otus.spring.hw13batch.entity.Book;
+import com.otus.spring.hw13batch.entity.SqlDbBook;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -36,7 +36,7 @@ public class ShellApplication {
                 "FROM books b INNER JOIN genres g ON b.genre_id = g.id";
 
 
-        jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Book.class))
+        jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(SqlDbBook.class))
                 .forEach(System.out::println);
     }
 }

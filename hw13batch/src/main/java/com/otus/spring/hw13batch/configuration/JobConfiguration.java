@@ -1,7 +1,6 @@
 package com.otus.spring.hw13batch.configuration;
 
-import com.otus.spring.hw13batch.entity.MongoDbBook;
-import com.otus.spring.hw13batch.entity.Book;
+import com.otus.spring.hw13batch.entity.*;
 import lombok.AllArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -31,33 +30,45 @@ public class JobConfiguration {
     @Bean
     public Job migrateBooksJob() {
         return jobBuilderFactory.get("migrateBooksJob")
-                .flow(step())
+                .flow(bookStep())
+                .next(genreStep())
+                .next(authorStep())
                 .end()
                 .build();
     }
 
     @Bean
-    public Step step() {
+    public Step bookStep() {
         return stepBuilderFactory.get("step")
-                .<Book, MongoDbBook>chunk(10)
-                .reader(reader())
-                .processor(processor())
-                .writer(writer())
+                .<SqlDbBook, MongoDbBook>chunk(10)
+                .reader(bookReader())
+                .processor(bookProcessor())
+                .writer(bookWriter())
                 .build();
     }
 
     @Bean
-    public ItemReader<Book> reader() {
-        return new JdbcCursorItemReaderBuilder<Book>()
-                .name("bookReader")
-                .dataSource(dataSource)
-                .sql("SELECT id, genre_id, name, year FROM books")
-                .rowMapper(new BookRowMapper())
+    public Step authorStep() {
+        return stepBuilderFactory.get("step")
+                .<SqlDbAuthor, MongoDbAuthor>chunk(10)
+                .reader(authorReader())
+                .processor(authorProcessor())
+                .writer(authorWriter())
                 .build();
     }
 
     @Bean
-    public ItemProcessor<Book, MongoDbBook> processor() {
+    public Step genreStep() {
+        return stepBuilderFactory.get("step")
+                .<SqlDbGenre, MongoDbGenre>chunk(10)
+                .reader(genreReader())
+                .processor(genreProcessor())
+                .writer(genreWriter())
+                .build();
+    }
+
+    @Bean
+    public ItemProcessor<SqlDbBook, MongoDbBook> bookProcessor() {
         return item -> new MongoDbBook(
                 null,
                 item.getId(),
@@ -67,10 +78,74 @@ public class JobConfiguration {
     }
 
     @Bean
-    public ItemWriter<MongoDbBook> writer() {
+    public ItemProcessor<SqlDbAuthor, MongoDbAuthor> authorProcessor() {
+        return item -> new MongoDbAuthor(
+                null,
+                item.getId(),
+                item.getName()
+        );
+    }
+
+    @Bean
+    public ItemProcessor<SqlDbGenre, MongoDbGenre> genreProcessor() {
+        return item -> new MongoDbGenre(
+                null,
+                item.getId(),
+                item.getName()
+        );
+    }
+
+    @Bean
+    public ItemWriter<MongoDbBook> bookWriter() {
         return new MongoItemWriterBuilder<MongoDbBook>()
                 .collection("books")
                 .template(mongoOperations)
+                .build();
+    }
+
+    @Bean
+    public ItemWriter<MongoDbAuthor> authorWriter() {
+        return new MongoItemWriterBuilder<MongoDbAuthor>()
+                .collection("authors")
+                .template(mongoOperations)
+                .build();
+    }
+
+    @Bean
+    public ItemWriter<MongoDbGenre> genreWriter() {
+        return new MongoItemWriterBuilder<MongoDbGenre>()
+                .collection("genres")
+                .template(mongoOperations)
+                .build();
+    }
+
+    @Bean
+    public ItemReader<SqlDbBook> bookReader() {
+        return new JdbcCursorItemReaderBuilder<SqlDbBook>()
+                .name("bookReader")
+                .dataSource(dataSource)
+                .sql("SELECT id, genre_id, name, year FROM books")
+                .rowMapper(new BookRowMapper())
+                .build();
+    }
+
+    @Bean
+    public ItemReader<SqlDbGenre> genreReader() {
+        return new JdbcCursorItemReaderBuilder<SqlDbGenre>()
+                .name("genreReader")
+                .dataSource(dataSource)
+                .sql("SELECT id, name FROM genres")
+                .rowMapper(new GenreRowMapper())
+                .build();
+    }
+
+    @Bean
+    public ItemReader<SqlDbAuthor> authorReader() {
+        return new JdbcCursorItemReaderBuilder<SqlDbAuthor>()
+                .name("authorReader")
+                .dataSource(dataSource)
+                .sql("SELECT id, name FROM authors")
+                .rowMapper(new AuthorRowMapper())
                 .build();
     }
 }

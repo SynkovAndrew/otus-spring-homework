@@ -13,10 +13,8 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Book {
+public class SqlDbBook {
     private Integer id;
-    private Genre genre;
-    private Author author;
     private String name;
     private Integer year;
 }

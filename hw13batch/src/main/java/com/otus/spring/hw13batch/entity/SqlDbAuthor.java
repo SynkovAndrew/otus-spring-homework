@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Author {
+public class SqlDbAuthor {
     private Integer id;
     private String name;
 }
