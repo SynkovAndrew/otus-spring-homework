@@ -12,6 +12,7 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.data.builder.MongoItemWriterBuilder;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -28,48 +29,53 @@ public class JobConfiguration {
     private final MongoOperations mongoOperations;
 
     @Bean
-    public Job migrateBooksJob() {
+    public Job migrateBooksJob(@Qualifier("bookStep") Step bookStep,
+                               @Qualifier("authorStep") Step authorStep,
+                               @Qualifier("genreStep") Step genreStep) {
         return jobBuilderFactory.get("migrateBooksJob")
-                .flow(bookStep())
-                .next(genreStep())
-                .next(authorStep())
+                .flow(bookStep)
+                .next(genreStep)
+                .next(authorStep)
                 .end()
                 .build();
     }
 
     @Bean
-    public Step bookStep() {
+    @Qualifier("bookStep")
+    public Step bookStep(ItemReader<BookSqlView> bookReader) {
         return stepBuilderFactory.get("step")
-                .<SqlDbBook, MongoDbBook>chunk(10)
-                .reader(bookReader())
+                .<BookSqlView, BookMongoEntity>chunk(10)
+                .reader(bookReader)
                 .processor(bookProcessor())
                 .writer(bookWriter())
                 .build();
     }
 
     @Bean
-    public Step authorStep() {
+    @Qualifier("authorStep")
+    public Step authorStep(ItemReader<AuthorSqlEntity> authorReader) {
         return stepBuilderFactory.get("step")
-                .<SqlDbAuthor, MongoDbAuthor>chunk(10)
-                .reader(authorReader())
+                .<AuthorSqlEntity, AuthorMongoEntity>chunk(10)
+                .reader(authorReader)
                 .processor(authorProcessor())
                 .writer(authorWriter())
                 .build();
     }
 
     @Bean
-    public Step genreStep() {
+    @Qualifier("genreStep")
+    public Step genreStep(ItemReader<GenreSqlEntity> genreReader) {
         return stepBuilderFactory.get("step")
-                .<SqlDbGenre, MongoDbGenre>chunk(10)
-                .reader(genreReader())
+                .<GenreSqlEntity, GenreMongoEntity>chunk(10)
+                .reader(genreReader)
                 .processor(genreProcessor())
                 .writer(genreWriter())
                 .build();
     }
 
     @Bean
-    public ItemProcessor<SqlDbBook, MongoDbBook> bookProcessor() {
-        return item -> new MongoDbBook(
+    public ItemProcessor<BookSqlView, BookMongoEntity> bookProcessor() {
+        return item -> new BookMongoEntity(
                 null,
                 item.getId(),
                 item.getName(),
@@ -78,8 +84,8 @@ public class JobConfiguration {
     }
 
     @Bean
-    public ItemProcessor<SqlDbAuthor, MongoDbAuthor> authorProcessor() {
-        return item -> new MongoDbAuthor(
+    public ItemProcessor<AuthorSqlEntity, AuthorMongoEntity> authorProcessor() {
+        return item -> new AuthorMongoEntity(
                 null,
                 item.getId(),
                 item.getName()
@@ -87,8 +93,8 @@ public class JobConfiguration {
     }
 
     @Bean
-    public ItemProcessor<SqlDbGenre, MongoDbGenre> genreProcessor() {
-        return item -> new MongoDbGenre(
+    public ItemProcessor<GenreSqlEntity, GenreMongoEntity> genreProcessor() {
+        return item -> new GenreMongoEntity(
                 null,
                 item.getId(),
                 item.getName()
@@ -96,56 +102,56 @@ public class JobConfiguration {
     }
 
     @Bean
-    public ItemWriter<MongoDbBook> bookWriter() {
-        return new MongoItemWriterBuilder<MongoDbBook>()
+    public ItemWriter<BookMongoEntity> bookWriter() {
+        return new MongoItemWriterBuilder<BookMongoEntity>()
                 .collection("books")
                 .template(mongoOperations)
                 .build();
     }
 
     @Bean
-    public ItemWriter<MongoDbAuthor> authorWriter() {
-        return new MongoItemWriterBuilder<MongoDbAuthor>()
+    public ItemWriter<AuthorMongoEntity> authorWriter() {
+        return new MongoItemWriterBuilder<AuthorMongoEntity>()
                 .collection("authors")
                 .template(mongoOperations)
                 .build();
     }
 
     @Bean
-    public ItemWriter<MongoDbGenre> genreWriter() {
-        return new MongoItemWriterBuilder<MongoDbGenre>()
+    public ItemWriter<GenreMongoEntity> genreWriter() {
+        return new MongoItemWriterBuilder<GenreMongoEntity>()
                 .collection("genres")
                 .template(mongoOperations)
                 .build();
     }
 
     @Bean
-    public ItemReader<SqlDbBook> bookReader() {
-        return new JdbcCursorItemReaderBuilder<SqlDbBook>()
+    public ItemReader<BookSqlView> bookReader(BookRowMapper bookRowMapper) {
+        return new JdbcCursorItemReaderBuilder<BookSqlView>()
                 .name("bookReader")
                 .dataSource(dataSource)
                 .sql("SELECT id, genre_id, name, year FROM books")
-                .rowMapper(new BookRowMapper())
+                .rowMapper(bookRowMapper)
                 .build();
     }
 
     @Bean
-    public ItemReader<SqlDbGenre> genreReader() {
-        return new JdbcCursorItemReaderBuilder<SqlDbGenre>()
+    public ItemReader<GenreSqlEntity> genreReader(GenreRowMapper genreRowMapper) {
+        return new JdbcCursorItemReaderBuilder<GenreSqlEntity>()
                 .name("genreReader")
                 .dataSource(dataSource)
                 .sql("SELECT id, name FROM genres")
-                .rowMapper(new GenreRowMapper())
+                .rowMapper(genreRowMapper)
                 .build();
     }
 
     @Bean
-    public ItemReader<SqlDbAuthor> authorReader() {
-        return new JdbcCursorItemReaderBuilder<SqlDbAuthor>()
+    public ItemReader<AuthorSqlEntity> authorReader(AuthorRowMapper authorRowMapper) {
+        return new JdbcCursorItemReaderBuilder<AuthorSqlEntity>()
                 .name("authorReader")
                 .dataSource(dataSource)
                 .sql("SELECT id, name FROM authors")
-                .rowMapper(new AuthorRowMapper())
+                .rowMapper(authorRowMapper)
                 .build();
     }
 }

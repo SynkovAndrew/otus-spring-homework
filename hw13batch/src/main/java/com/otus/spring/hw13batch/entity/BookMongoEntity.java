@@ -8,11 +8,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Builder
-@Document("authors")
+@Document("books")
 @NoArgsConstructor
 @AllArgsConstructor
-public class MongoDbAuthor {
+public class BookMongoEntity {
     private String id;
     private Integer externalId;
     private String name;
+    private Integer year;
 }

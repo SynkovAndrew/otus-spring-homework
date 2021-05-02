@@ -1,4 +1,4 @@
-package com.otus.spring.hw13batch.entity;
+package com.otus.spring.hw13batch.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,12 +8,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Builder
-@Document("books")
 @NoArgsConstructor
 @AllArgsConstructor
-public class MongoDbBook {
-    private String id;
-    private Integer externalId;
+public class Genre {
+    private Integer id;
     private String name;
-    private Integer year;
 }

@@ -1,8 +1,12 @@
 package com.otus.spring.hw13batch.shell;
 
-import com.otus.spring.hw13batch.entity.MongoDbBook;
-import com.otus.spring.hw13batch.entity.SqlDbBook;
+import com.otus.spring.hw13batch.entity.BookMongoEntity;
+import com.otus.spring.hw13batch.entity.BookSqlView;
 import lombok.RequiredArgsConstructor;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecutionException;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -14,15 +18,17 @@ import org.springframework.shell.standard.ShellMethod;
 public class ShellApplication {
     private final MongoOperations mongoOperations;
     private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final JobLauncher jobLauncher;
+    private final Job job;
 
     @ShellMethod(key = {"migrate", "m"}, value = "run migration")
-    public void migrate() {
-
+    public void migrate() throws JobExecutionException {
+        jobLauncher.run(job, new JobParameters());
     }
 
     @ShellMethod(key = {"load-book-from-mongo", "lbm"}, value = "load books from mongo")
     public void loadBookFromMongo() {
-        mongoOperations.findAll(MongoDbBook.class)
+        mongoOperations.findAll(BookMongoEntity.class)
                 .forEach(System.out::println);
     }
 
@@ -36,7 +42,7 @@ public class ShellApplication {
                 "FROM books b INNER JOIN genres g ON b.genre_id = g.id";
 
 
-        jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(SqlDbBook.class))
+        jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(BookSqlView.class))
                 .forEach(System.out::println);
     }
 }
