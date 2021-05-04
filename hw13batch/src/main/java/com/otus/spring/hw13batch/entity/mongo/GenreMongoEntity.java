@@ -1,4 +1,4 @@
-package com.otus.spring.hw13batch.entity;
+package com.otus.spring.hw13batch.entity.mongo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,12 +8,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Builder
-@Document("books")
+@Document("genres")
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookMongoEntity {
+public class GenreMongoEntity {
     private String id;
     private Integer externalId;
     private String name;
-    private Integer year;
 }

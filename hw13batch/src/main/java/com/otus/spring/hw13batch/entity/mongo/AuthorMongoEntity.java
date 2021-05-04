@@ -1,4 +1,4 @@
-package com.otus.spring.hw13batch.entity;
+package com.otus.spring.hw13batch.entity.mongo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

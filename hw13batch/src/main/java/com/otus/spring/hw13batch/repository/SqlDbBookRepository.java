@@ -3,7 +3,7 @@ package com.otus.spring.hw13batch.repository;
 import com.otus.spring.hw13batch.domain.Author;
 import com.otus.spring.hw13batch.domain.Book;
 import com.otus.spring.hw13batch.domain.Genre;
-import com.otus.spring.hw13batch.entity.BookSqlView;
+import com.otus.spring.hw13batch.entity.sql.BookSqlView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;

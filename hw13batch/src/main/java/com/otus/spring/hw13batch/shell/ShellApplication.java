@@ -1,7 +1,7 @@
 package com.otus.spring.hw13batch.shell;
 
-import com.otus.spring.hw13batch.entity.BookMongoEntity;
-import com.otus.spring.hw13batch.entity.BookSqlView;
+import com.otus.spring.hw13batch.entity.mongo.BookMongoEntity;
+import com.otus.spring.hw13batch.entity.sql.BookSqlView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecutionException;

@@ -1,6 +1,11 @@
 package com.otus.spring.hw13batch.configuration;
 
-import com.otus.spring.hw13batch.entity.*;
+import com.otus.spring.hw13batch.entity.mongo.AuthorMongoEntity;
+import com.otus.spring.hw13batch.entity.mongo.BookMongoEntity;
+import com.otus.spring.hw13batch.entity.mongo.GenreMongoEntity;
+import com.otus.spring.hw13batch.entity.sql.AuthorSqlEntity;
+import com.otus.spring.hw13batch.entity.sql.BookSqlView;
+import com.otus.spring.hw13batch.entity.sql.GenreSqlEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -42,34 +47,40 @@ public class JobConfiguration {
 
     @Bean
     @Qualifier("bookStep")
-    public Step bookStep(ItemReader<BookSqlView> bookReader) {
+    public Step bookStep(ItemReader<BookSqlView> bookReader,
+                         ItemProcessor<BookSqlView, BookMongoEntity> bookProcessor,
+                         ItemWriter<BookMongoEntity> bookWriter) {
         return stepBuilderFactory.get("step")
                 .<BookSqlView, BookMongoEntity>chunk(10)
                 .reader(bookReader)
-                .processor(bookProcessor())
-                .writer(bookWriter())
+                .processor(bookProcessor)
+                .writer(bookWriter)
                 .build();
     }
 
     @Bean
     @Qualifier("authorStep")
-    public Step authorStep(ItemReader<AuthorSqlEntity> authorReader) {
+    public Step authorStep(ItemReader<AuthorSqlEntity> authorReader,
+                           ItemProcessor<AuthorSqlEntity, AuthorMongoEntity> authorProcessor,
+                           ItemWriter<AuthorMongoEntity> authorWriter) {
         return stepBuilderFactory.get("step")
                 .<AuthorSqlEntity, AuthorMongoEntity>chunk(10)
                 .reader(authorReader)
-                .processor(authorProcessor())
-                .writer(authorWriter())
+                .processor(authorProcessor)
+                .writer(authorWriter)
                 .build();
     }
 
     @Bean
     @Qualifier("genreStep")
-    public Step genreStep(ItemReader<GenreSqlEntity> genreReader) {
+    public Step genreStep(ItemReader<GenreSqlEntity> genreReader,
+                          ItemProcessor<GenreSqlEntity, GenreMongoEntity> genreProcessor,
+                          ItemWriter<GenreMongoEntity> genreWriter) {
         return stepBuilderFactory.get("step")
                 .<GenreSqlEntity, GenreMongoEntity>chunk(10)
                 .reader(genreReader)
-                .processor(genreProcessor())
-                .writer(genreWriter())
+                .processor(genreProcessor)
+                .writer(genreWriter)
                 .build();
     }
 

@@ -1,6 +1,6 @@
 package com.otus.spring.hw13batch.configuration;
 
-import com.otus.spring.hw13batch.entity.GenreSqlEntity;
+import com.otus.spring.hw13batch.entity.sql.GenreSqlEntity;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 

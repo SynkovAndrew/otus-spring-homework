@@ -1,4 +1,4 @@
-package com.otus.spring.hw13batch.entity;
+package com.otus.spring.hw13batch.entity.sql;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthorSqlEntity {
+public class GenreSqlEntity {
     private Integer id;
     private String name;
 }
