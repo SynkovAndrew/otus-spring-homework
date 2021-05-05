@@ -15,7 +15,6 @@ public class BookMongoEntity {
     private String id;
     private String authorId;
     private String genreId;
-    private Integer externalId;
     private String name;
     private Integer year;
 }

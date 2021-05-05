@@ -9,12 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookSqlView {
+public class BookSqlEntity {
     private Integer id;
+    private Integer genreId;
+    private Integer authorId;
     private String name;
     private Integer year;
-    private Integer authorId;
-    private String authorName;
-    private Integer genreId;
-    private String genreName;
 }

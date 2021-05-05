@@ -12,10 +12,10 @@ values (1, 'Erich Maria Remarque'),
        (3, 'George Orwell'),
        (4, 'Sigmund Freud');
 
-insert into books (id, genre_id, author_id, name, year)
-values (1, 6, 1, 'The Night in Lisbon', 1964),
-       (2, 6, 1, 'The Black Obelisk', 1957),
-       (3, 6, 2, 'The Old Man and the Sea', 1951),
-       (4, 6, 2, 'The Sun Also Rises', 1927),
-       (5, 5, 3, 'Animal Farm', 1945),
-       (6, 4, 4, 'The Psychopathology of Everyday Life', 1904);
+insert into books (id, name, year, genre_id, author_id)
+values (1, 'The Night in Lisbon', 1964, 6, 1),
+       (2, 'The Black Obelisk', 1957, 6, 1),
+       (3, 'The Old Man and the Sea', 1951, 6, 2),
+       (4, 'The Sun Also Rises', 1927, 6, 2),
+       (5, 'Animal Farm', 1945, 5, 3),
+       (6, 'The Psychopathology of Everyday Life', 1904, 4, 4);

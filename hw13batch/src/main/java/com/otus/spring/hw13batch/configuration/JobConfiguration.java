@@ -4,7 +4,7 @@ import com.otus.spring.hw13batch.entity.mongo.AuthorMongoEntity;
 import com.otus.spring.hw13batch.entity.mongo.BookMongoEntity;
 import com.otus.spring.hw13batch.entity.mongo.GenreMongoEntity;
 import com.otus.spring.hw13batch.entity.sql.AuthorSqlEntity;
-import com.otus.spring.hw13batch.entity.sql.BookSqlView;
+import com.otus.spring.hw13batch.entity.sql.BookSqlEntity;
 import com.otus.spring.hw13batch.entity.sql.GenreSqlEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -47,11 +47,11 @@ public class JobConfiguration {
 
     @Bean
     @Qualifier("bookStep")
-    public Step bookStep(ItemReader<BookSqlView> bookReader,
-                         ItemProcessor<BookSqlView, BookMongoEntity> bookProcessor,
+    public Step bookStep(ItemReader<BookSqlEntity> bookReader,
+                         ItemProcessor<BookSqlEntity, BookMongoEntity> bookProcessor,
                          ItemWriter<BookMongoEntity> bookWriter) {
         return stepBuilderFactory.get("step")
-                .<BookSqlView, BookMongoEntity>chunk(10)
+                .<BookSqlEntity, BookMongoEntity>chunk(10)
                 .reader(bookReader)
                 .processor(bookProcessor)
                 .writer(bookWriter)
@@ -85,10 +85,11 @@ public class JobConfiguration {
     }
 
     @Bean
-    public ItemProcessor<BookSqlView, BookMongoEntity> bookProcessor() {
+    public ItemProcessor<BookSqlEntity, BookMongoEntity> bookProcessor() {
         return item -> new BookMongoEntity(
-                null,
-                item.getId(),
+                String.valueOf(item.getId()),
+                String.valueOf(item.getAuthorId()),
+                String.valueOf(item.getGenreId()),
                 item.getName(),
                 item.getYear()
         );
@@ -97,8 +98,7 @@ public class JobConfiguration {
     @Bean
     public ItemProcessor<AuthorSqlEntity, AuthorMongoEntity> authorProcessor() {
         return item -> new AuthorMongoEntity(
-                null,
-                item.getId(),
+                String.valueOf(item.getId()),
                 item.getName()
         );
     }
@@ -106,8 +106,7 @@ public class JobConfiguration {
     @Bean
     public ItemProcessor<GenreSqlEntity, GenreMongoEntity> genreProcessor() {
         return item -> new GenreMongoEntity(
-                null,
-                item.getId(),
+                String.valueOf(item.getId()),
                 item.getName()
         );
     }
@@ -137,11 +136,11 @@ public class JobConfiguration {
     }
 
     @Bean
-    public ItemReader<BookSqlView> bookReader(BookRowMapper bookRowMapper) {
-        return new JdbcCursorItemReaderBuilder<BookSqlView>()
+    public ItemReader<BookSqlEntity> bookReader(BookRowMapper bookRowMapper) {
+        return new JdbcCursorItemReaderBuilder<BookSqlEntity>()
                 .name("bookReader")
                 .dataSource(dataSource)
-                .sql("SELECT id, genre_id, name, year FROM books")
+                .sql("SELECT id, genre_id, author_id, name, year FROM books")
                 .rowMapper(bookRowMapper)
                 .build();
     }

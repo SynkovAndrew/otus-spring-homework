@@ -13,6 +13,5 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 public class AuthorMongoEntity {
     private String id;
-    private Integer externalId;
     private String name;
 }

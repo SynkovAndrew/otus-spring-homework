@@ -19,10 +19,10 @@ create table authors
 
 create table books
 (
-    genre_id  integer references genres (id),
-    author_id  integer references authors (id),
     id        serial primary key,
     name      varchar(255) not null,
-    year      integer
+    year      integer,
+    genre_id  integer references genres (id),
+    author_id  integer references authors (id)
 );
 

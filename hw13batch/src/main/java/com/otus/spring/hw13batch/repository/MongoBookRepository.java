@@ -7,6 +7,7 @@ import com.otus.spring.hw13batch.entity.mongo.AuthorMongoEntity;
 import com.otus.spring.hw13batch.entity.mongo.BookMongoEntity;
 import com.otus.spring.hw13batch.entity.mongo.GenreMongoEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toMap;
 
 @Component
+@Qualifier("mongoBookRepository")
 @RequiredArgsConstructor
 public class MongoBookRepository implements BookRepository {
     private final MongoOperations ops;
@@ -37,18 +39,18 @@ public class MongoBookRepository implements BookRepository {
                      Map<String, AuthorMongoEntity> authorMongoEntities,
                      Map<String, GenreMongoEntity> genreMongoEntities) {
         return Book.builder()
-                .id(bookEntity.getExternalId())
+                .id(Integer.valueOf(bookEntity.getId()))
                 .year(bookEntity.getYear())
                 .name(bookEntity.getName())
                 .author(ofNullable(authorMongoEntities.get(bookEntity.getAuthorId()))
                         .map(authorMongoEntity -> Author.builder()
-                                .id(authorMongoEntity.getExternalId())
+                                .id(Integer.valueOf(authorMongoEntity.getId()))
                                 .name(authorMongoEntity.getName())
                                 .build())
                         .orElse(null))
                 .genre(ofNullable(genreMongoEntities.get(bookEntity.getAuthorId()))
                         .map(genreMongoEntity -> Genre.builder()
-                                .id(genreMongoEntity.getExternalId())
+                                .id(Integer.valueOf(genreMongoEntity.getId()))
                                 .name(genreMongoEntity.getName())
                                 .build())
                         .orElse(null))
